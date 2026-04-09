@@ -4,129 +4,169 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Opus Pricing Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0B1F3A;--navy2:#162D52;
-  --blue:#2359CC;--blue-lt:#4A7FF5;--blue-ghost:#EBF1FF;
-  --teal:#0D8C7C;--teal-ghost:#E4F5F2;
-  --amber:#C47A15;--amber-ghost:#FEF4E3;
-  --purple:#6A48C9;--purple-ghost:#F0ECFD;
-  --slate:#3D5166;--slate-ghost:#EAF0F5;
-  --green:#1A7F4B;--green-ghost:#E4F5EC;
-  --surface:#F4F6FB;--card:#fff;
-  --border:#E2E8F2;--border-mid:#C8D3E5;
-  --tx1:#0B1F3A;--tx2:#4A5672;--tx3:#8A95AE;
-  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  --r-sm:8px;--r-md:12px;--r-lg:16px;
+  /* Opus brand colours */
+  --black:#111111;
+  --dark-grey:#333333;
+  --mid-grey:#666666;
+  --light-grey:#999999;
+  --extra-light-grey:#F3F3F3;
+  --blue:#387BF0;
+  --green:#57D873;
+  --pink:#EF72E7;
+  --white:#FFFFFF;
+
+  /* Semantic mappings */
+  --navy:#111111;--navy2:#1A1A1A;
+  --blue-lt:#5E96F3;--blue-ghost:#EBF2FE;
+  --teal:#57D873;--teal-ghost:#EDFBF1;
+  --amber:#D97706;--amber-ghost:#FFFBEB;
+  --purple:#387BF0;--purple-ghost:#EBF2FE;
+  --slate:#666666;--slate-ghost:#F3F3F3;
+  --green:#57D873;--green-ghost:#EDFBF1;
+  --surface:#F3F3F3;--card:#FFFFFF;
+  --border:#E5E5E5;--border-mid:#CCCCCC;
+  --tx1:#111111;--tx2:#333333;--tx3:#666666;
+
+  /* Typography */
+  --font-heading:'Prompt',sans-serif;
+  --font:'Open Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;
 }
 html{font-size:14px;-webkit-font-smoothing:antialiased}
-body{font-family:var(--font);background:var(--surface);color:var(--tx1);min-height:100vh;display:flex;flex-direction:column}
+body{font-family:var(--font);background:var(--surface);color:var(--tx1);min-height:100vh;display:flex;flex-direction:column;font-size:11pt}
+
+/* Typography scale */
+.t-h1{font-family:var(--font-heading);font-weight:500;font-size:20pt;color:var(--black)}
+.t-h2{font-family:var(--font-heading);font-weight:500;font-size:16pt;color:var(--black)}
+.t-h3{font-family:var(--font);font-weight:500;font-size:14pt;color:var(--dark-grey)}
+.t-h4{font-family:var(--font);font-weight:500;font-size:12pt;color:var(--dark-grey)}
+.t-body{font-family:var(--font);font-weight:400;font-size:11pt;color:var(--dark-grey)}
 
 /* ── HEADER ─────────────────────────── */
-.hdr{height:52px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:200;flex-shrink:0}
+.hdr{height:52px;background:#111111;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:200;flex-shrink:0}
 .hdr-left{display:flex;align-items:center;gap:10px}
-.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--blue-lt)}
-.hdr-name{font-size:12px;font-weight:600;color:#fff;letter-spacing:.06em;text-transform:uppercase}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:#387BF0}
+.hdr-name{font-size:13px;font-weight:500;font-family:var(--font-heading);color:#fff;letter-spacing:.03em;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:10px}
-.chip{font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.05em;padding:3px 9px;border-radius:20px}
-.chip-green{background:rgba(26,127,75,.2);color:#6ee8a2;border:1px solid rgba(26,127,75,.3)}
+.chip{font-size:10px;font-weight:500;font-family:var(--mono);letter-spacing:.05em;padding:3px 9px;border-radius:20px}
+.chip-green{background:rgba(87,216,115,.2);color:#57D873;border:1px solid rgba(87,216,115,.3)}
 .chip-muted{color:rgba(255,255,255,.3);font-family:var(--mono);font-size:10px}
 
-/* ── MAIN GRID ───────────────────────── */
-.app{display:grid;grid-template-columns:220px 1fr 360px;flex:1;min-height:0;height:calc(100vh - 52px)}
+/* ── TERM SELECTOR ────────────────────── */
+.term-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.term-bar-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mid-grey);font-family:var(--font);white-space:nowrap}
+.term-options{display:flex;gap:6px}
+.term-opt{position:relative;display:flex;align-items:center;gap:7px;padding:6px 14px;border:1.5px solid var(--border-mid);border-radius:var(--r-sm);cursor:pointer;transition:all .15s;background:var(--card);font-family:var(--font)}
+.term-opt:hover:not(.term-disabled){border-color:#387BF0;background:#EBF2FE}
+.term-opt.term-active{border-color:#387BF0;background:#EBF2FE}
+.term-opt-name{font-size:12px;font-weight:500;color:var(--black)}
+.term-opt.term-active .term-opt-name{color:#387BF0}
+.term-opt-sub{font-size:10px;color:var(--mid-grey);font-family:var(--mono)}
+.term-opt.term-active .term-opt-sub{color:#387BF0}
+.term-disabled{opacity:.55;cursor:not-allowed}
+.term-badge{font-size:8px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:10px;background:#FEF9C3;color:#854D0E;border:1px solid #FDE047;white-space:nowrap}
+.term-multiplier{font-size:10px;font-family:var(--mono);font-weight:500;color:var(--mid-grey);margin-left:2px}
+.term-opt.term-active .term-multiplier{color:#387BF0}
+.term-note{font-size:10px;color:var(--mid-grey);font-family:var(--font);font-style:italic;margin-left:4px}
+.app-wrap{display:flex;flex-direction:column;flex:1;min-height:0;height:calc(100vh - 52px)}
+.app{display:grid;grid-template-columns:220px 1fr 360px;flex:1;min-height:0;overflow:hidden}
 
 /* ── NAV RAIL ────────────────────────── */
-.nav{background:var(--navy2);padding:1.25rem 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav{background:#1A1A1A;padding:1.25rem 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;cursor:pointer;transition:background .15s;border-left:3px solid transparent;text-decoration:none}
-.nav-item:hover{background:rgba(255,255,255,.05)}
-.nav-item.active{background:rgba(255,255,255,.07);border-left-color:var(--blue-lt)}
-.nav-badge{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 7px;border-radius:20px;flex-shrink:0;text-transform:uppercase}
-.nb-slate {background:rgba(61,81,102,.35); color:#9BB5CC}
-.nb-blue  {background:rgba(35,89,204,.3);  color:#89AAEE}
-.nb-teal  {background:rgba(13,140,124,.3); color:#6ECFC5}
-.nb-amber {background:rgba(196,122,21,.3); color:#E5B46A}
-.nb-purple{background:rgba(106,72,201,.3); color:#B59EE8}
-.nav-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.75);line-height:1.2}
-.nav-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
-.nav-item.active .nav-label{color:#fff}
+.nav-item:hover{background:rgba(56,123,240,.1)}
+.nav-item.active{background:rgba(56,123,240,.15);border-left-color:#387BF0}
+.nav-badge{font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:.07em;padding:2px 7px;border-radius:20px;flex-shrink:0;text-transform:uppercase}
+.nb-slate {background:rgba(102,102,102,.4); color:#CCCCCC}
+.nb-blue  {background:rgba(56,123,240,.25); color:#7FAAFF}
+.nb-teal  {background:rgba(87,216,115,.2);  color:#57D873}
+.nb-amber {background:rgba(217,119,6,.25);  color:#FCD34D}
+.nb-purple{background:rgba(239,114,231,.2); color:#EF72E7}
+.nav-label{font-size:12px;font-weight:400;font-family:var(--font);color:rgba(255,255,255,.75);line-height:1.2}
+.nav-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;font-family:var(--mono)}
+.nav-item.active .nav-label{color:#fff;font-weight:500}
 .nav-item.active .nav-sub{color:rgba(255,255,255,.5)}
-.nav-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 1.25rem}
-.nav-section-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 1.25rem 4px}
+.nav-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 1.25rem}
+.nav-section-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 1.25rem 4px;font-family:var(--font)}
 
 /* ── CONFIG PANEL ────────────────────── */
 .config{overflow-y:auto;padding:1.5rem}
-.section{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:1rem;overflow:hidden;transition:box-shadow .2s}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:1rem;margin-top:1rem;overflow:hidden;transition:box-shadow .2s}
+.section:first-child{margin-top:0}
 .section:focus-within{box-shadow:0 0 0 2px var(--blue-ghost),0 0 0 1px var(--border)}
 .sec-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer;user-select:none}
 .sec-head-left{display:flex;align-items:center;gap:10px}
-.sec-pill{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;padding:3px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0}
-.sp-slate {background:var(--slate-ghost); color:var(--slate)}
-.sp-blue  {background:var(--blue-ghost);  color:var(--blue)}
-.sp-teal  {background:var(--teal-ghost);  color:var(--teal)}
-.sp-amber {background:var(--amber-ghost); color:var(--amber)}
-.sp-purple{background:var(--purple-ghost);color:var(--purple)}
-.sec-title{font-size:13px;font-weight:600;color:var(--tx1)}
-.sec-meta{font-size:11px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.sec-pill{font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:.08em;padding:3px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0}
+.sp-slate {background:#F3F3F3; color:#666666}
+.sp-blue  {background:#EBF2FE; color:#387BF0}
+.sp-teal  {background:#EDFBF1; color:#57D873}
+.sp-amber {background:#FFFBEB; color:#B45309}
+.sp-purple{background:#EBF2FE; color:#387BF0}
+.sec-title{font-size:14pt;font-weight:500;font-family:var(--font-heading);color:var(--black)}
+.sec-meta{font-size:10px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
 .sec-chevron{width:16px;height:16px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
 .section.collapsed .sec-chevron{transform:rotate(-90deg)}
-.sec-body{padding:0 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.875rem}
+.sec-body{padding:.875rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.875rem}
 .section.collapsed .sec-body{display:none}
 
 /* Descriptions */
-.sec-desc{font-size:12px;color:var(--tx2);line-height:1.6;padding:0 1.25rem .75rem;border-bottom:1px solid var(--border);margin-bottom:-.1rem}
+.sec-desc{font-size:11pt;font-weight:400;font-family:var(--font);color:var(--dark-grey);line-height:1.6;padding:.75rem 1.25rem .75rem;border-bottom:1px solid var(--border);margin-bottom:-.1rem}
 .section.collapsed .sec-desc{display:none}
-.vp-list{display:flex;flex-direction:column;gap:3px;padding:0 1.25rem .875rem;border-bottom:1px solid var(--border)}
+.vp-list{display:flex;flex-direction:column;gap:3px;padding:.875rem 1.25rem .875rem;border-bottom:1px solid var(--border)}
 .section.collapsed .vp-list{display:none}
-.vp{display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:var(--tx2);line-height:1.45}
-.vp-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.vd-slate{background:var(--slate)} .vd-blue{background:var(--blue-lt)}
-.vd-teal{background:var(--teal)}   .vd-amber{background:var(--amber)}
-.vd-purple{background:var(--purple)}
+.vp{display:flex;align-items:center;gap:8px;font-size:11pt;font-weight:400;font-family:var(--font);color:var(--dark-grey);line-height:1.45;padding:2px 0}
+.vp-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.vd-slate{background:#94A3B8} .vd-blue{background:#5E96F3}
+.vd-teal{background:#57D873}   .vd-amber{background:#D97706}
+.vd-purple{background:#387BF0}
 
 /* Fields */
 .field{display:flex;flex-direction:column;gap:5px}
 .flabel{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
 .fstatic{font-size:13px;font-weight:500;color:var(--tx1);font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px}
 select{width:100%;font-family:var(--font);font-size:13px;color:var(--tx1);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:8px 30px 8px 11px;appearance:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A95AE' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,89,204,.1)}
+select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,240,.1)}
 .note{font-size:11px;color:var(--tx3);line-height:1.55}
 
 /* Commit banner */
-.commit-banner{display:flex;align-items:center;gap:9px;background:var(--green-ghost);border:1px solid #A8D9BE;border-radius:var(--r-sm);padding:9px 11px}
+.commit-banner{display:flex;align-items:center;gap:9px;background:#EBF2FE;border:1px solid #B3CFFB;border-radius:var(--r-sm);padding:9px 11px}
 .commit-icon{font-size:14px;flex-shrink:0}
-.commit-txt{font-size:11.5px;color:var(--green);line-height:1.45}
+.commit-txt{font-size:11.5px;color:#1A56C4;line-height:1.45}
 
 /* Tier grid */
 .tier-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .tc{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:9px 8px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center}
-.tc:hover{border-color:var(--blue-lt);background:var(--blue-ghost)}
-.tc.active{border-color:var(--blue);background:var(--blue-ghost)}
+.tc:hover{border-color:#5E96F3;background:#EBF2FE}
+.tc.active{border-color:#387BF0;background:#EBF2FE}
 .tc-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:4px}
-.tc.active .tc-name{color:var(--blue)}
+.tc.active .tc-name{color:#387BF0}
 .tc-vol{font-size:12px;font-weight:600;color:var(--tx1);font-family:var(--mono);margin-bottom:1px}
-.tc.active .tc-vol{color:var(--blue)}
+.tc.active .tc-vol{color:#387BF0}
 .tc-rate{font-size:10px;color:var(--tx2);font-family:var(--mono)}
-.tc-total{font-size:10px;color:var(--teal);font-family:var(--mono);font-weight:500;margin-top:3px}
+.tc-total{font-size:10px;color:#57D873;font-family:var(--mono);font-weight:500;margin-top:3px}
 
 /* Pkg cards */
 .pkg-list{display:flex;flex-direction:column;gap:5px}
 .pc{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column}
-.pc:hover{border-color:var(--teal);background:var(--teal-ghost)}
-.pc.active{border-color:var(--teal);background:var(--teal-ghost)}
+.pc:hover{border-color:#387BF0;background:#EBF2FE}
+.pc.active{border-color:#387BF0;background:#EBF2FE}
 .pc-name{font-size:12px;font-weight:600;color:var(--tx1)}
-.pc.active .pc-name{color:var(--teal)}
+.pc.active .pc-name{color:#387BF0}
 .pc-desc{font-size:10px;color:var(--tx3);margin-top:1px}
-.pc-unit{font-size:10px;color:var(--teal);font-family:var(--mono);margin-top:3px;font-weight:500}
-.pc-price{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--teal);white-space:nowrap}
+.pc-unit{font-size:10px;color:#387BF0;font-family:var(--mono);margin-top:3px;font-weight:500}
+.pc-price{font-size:13px;font-weight:600;font-family:var(--mono);color:#387BF0;white-space:nowrap}
 
 /* Discount section */
-.sp-red{background:#FDECEA;color:#C0392B}
+.sp-red{background:#FEF2F2;color:#DC2626}
 .disc-input-wrap{position:relative;display:flex;align-items:center}
 .disc-input{width:100%;font-family:var(--mono);font-size:13px;color:var(--tx1);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:8px 28px 8px 11px;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield}
 .disc-input::-webkit-outer-spin-button,.disc-input::-webkit-inner-spin-button{-webkit-appearance:none}
-.disc-input:focus{outline:none;border-color:#C0392B;box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.disc-input:focus{outline:none;border-color:#DC2626;box-shadow:0 0 0 3px rgba(220,38,38,.1)}
 .disc-input-dollar{padding:8px 11px 8px 24px}
 .disc-suffix{position:absolute;right:10px;font-size:12px;font-weight:600;color:var(--tx3);pointer-events:none;font-family:var(--mono)}
 .disc-prefix{position:absolute;left:9px;font-size:12px;font-weight:600;color:var(--tx3);pointer-events:none;font-family:var(--mono)}
@@ -151,33 +191,48 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .q-disc-badge{display:inline-block;font-size:11px;font-weight:600;font-family:var(--mono);padding:3px 10px;border-radius:20px;background:rgba(192,57,43,.25);color:#FF9085;border:1px solid rgba(192,57,43,.3);margin-top:4px}
 .opus-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 .opus-detail{border-top:1px solid var(--border);padding-top:10px}
-.pc.active .opus-detail{border-top-color:rgba(13,140,124,.2)}
-.opus-prefix{font-size:10.5px;font-weight:600;color:var(--teal);margin-bottom:5px}
-.pc.active .opus-prefix{color:var(--teal)}
-.opus-section-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.pc.active .opus-detail{border-top-color:rgba(56,123,240,.2)}
+.opus-prefix{font-size:10.5px;font-weight:600;color:#387BF0;margin-bottom:5px;font-family:var(--font)}
+.pc.active .opus-prefix{color:#387BF0}
+.opus-section-label{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mid-grey);margin-bottom:4px;font-family:var(--font)}
 .pc.active .opus-section-label{color:rgba(13,140,124,.7)}
-.opus-item{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:var(--tx2);line-height:1.45;padding:1px 0}
-.pc.active .opus-item{color:var(--tx1)}
-.opus-dot{width:4px;height:4px;border-radius:50%;background:var(--tx3);flex-shrink:0;margin-top:5px}
-.pc.active .opus-dot{background:var(--teal)}
-.opus-item-uplift .opus-dot.uplift-dot{background:var(--blue-lt)}
-.pc.active .opus-item-uplift .opus-dot.uplift-dot{background:var(--blue)}
-.opus-item-outcome .opus-dot.outcome-dot{background:var(--amber)}
-.pc.active .opus-item-outcome .opus-dot.outcome-dot{background:var(--amber)}
+.opus-item{display:flex;align-items:center;gap:8px;font-size:11pt;color:var(--dark-grey);line-height:1.45;padding:2px 0;font-family:var(--font)}
+.pc.active .opus-item{color:var(--black)}
+.opus-dot{width:5px;height:5px;border-radius:50%;background:var(--tx3);flex-shrink:0;}
+.pc.active .opus-dot{background:#387BF0}
+.opus-item-uplift .opus-dot.uplift-dot{background:#5E96F3}
+.pc.active .opus-item-uplift .opus-dot.uplift-dot{background:#387BF0}
+.opus-item-outcome .opus-dot.outcome-dot{background:#D97706}
+.pc.active .opus-item-outcome .opus-dot.outcome-dot{background:#D97706}
 
 /* Toggle rows */
 .tog{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--border-mid);border-radius:var(--r-sm);cursor:pointer;transition:background .15s}
 .tog:hover{background:var(--surface)}
 .tog-left{flex:1;min-width:0}
-.tog-name{font-size:12px;font-weight:500;color:var(--tx1)}
-.tog-sub{font-size:10.5px;color:var(--tx3);margin-top:1px}
-.tog-price{font-size:11px;font-weight:600;font-family:var(--mono);color:var(--purple);white-space:nowrap;flex-shrink:0}
-.tog-price.blue-price{color:var(--blue)}
+.tog-name{font-size:12pt;font-weight:500;font-family:var(--font);color:var(--black)}
+.tog-sub{font-size:10pt;color:var(--mid-grey);margin-top:1px;font-family:var(--font)}
+.tog-price{font-size:11pt;font-weight:500;font-family:var(--mono);color:#387BF0;white-space:nowrap;flex-shrink:0}
+.tog-price.blue-price{color:#387BF0}
 .sw{width:32px;height:18px;background:var(--border-mid);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0}
 .sw::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.tog.on .sw{background:var(--purple)}
+.tog.on .sw{background:#387BF0}
 .tog.on .sw::after{left:17px}
-.tog.on.sw-blue .sw{background:var(--blue)}
+.tog.on.sw-blue .sw{background:#387BF0}
+
+/* Cadence toggle */
+.disc-toggle-group{display:flex;gap:6px}
+.disc-option{flex:1;padding:7px 10px;font-size:11px;font-weight:600;font-family:var(--font);border:1px solid var(--border-mid);border-radius:var(--r-sm);background:var(--card);color:var(--tx3);cursor:pointer;transition:all .15s;text-align:center}
+.disc-option:hover{border-color:#387BF0;color:#387BF0}
+.disc-option.active{background:#EBF2FE;border-color:#387BF0;color:#387BF0}
+
+/* Layer checkboxes */
+.disc-layer-checks{display:flex;flex-direction:column;gap:6px}
+.disc-check{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r-sm);transition:background .15s}
+.disc-check:hover{background:var(--surface)}
+.disc-check input[type=checkbox]{width:14px;height:14px;accent-color:#387BF0;cursor:pointer;flex-shrink:0}
+.disc-check-pill{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.disc-check-label{font-size:12px;font-weight:500;color:var(--tx1)}
+.disc-check:has(input:checked){background:#EBF2FE;border-color:rgba(56,123,240,.25)}
 .qty-row{display:flex;align-items:center;gap:7px;margin-top:6px}
 .qb{width:20px;height:20px;border-radius:4px;border:1px solid var(--border-mid);background:var(--card);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--tx2);line-height:1}
 .qb:hover{background:var(--surface)}
@@ -185,20 +240,20 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .qty-label{font-size:10px;color:var(--tx3)}
 
 /* Sub-section label */
-.sub-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);padding-top:2px}
+.sub-label{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mid-grey);padding-top:2px;font-family:var(--font)}
 
 /* ── QUOTE PANEL ─────────────────────── */
-.quote{background:var(--navy);overflow-y:auto;display:flex;flex-direction:column}
+.quote{background:#111111;overflow-y:auto;display:flex;flex-direction:column}
 .q-header{padding:1.25rem 1.25rem .875rem;border-bottom:1px solid rgba(255,255,255,.08)}
 .q-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.q-title{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4)}
-.q-commit-chip{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:rgba(26,127,75,.2);color:#6ee8a2;border:1px solid rgba(26,127,75,.25)}
+.q-title{font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);font-family:var(--font)}
+.q-commit-chip{font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:rgba(56,123,240,.25);color:#A8C8FF;border:1px solid rgba(56,123,240,.35)}
 
 /* Total hero */
 .q-hero{text-align:center;padding:1.25rem 1.25rem 1rem}
 .q-yr-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
-.q-total{font-size:38px;font-weight:300;font-family:var(--mono);color:#fff;line-height:1;letter-spacing:-.02em}
-.q-monthly{font-size:12px;color:rgba(255,255,255,.35);margin-top:5px;font-family:var(--mono)}
+.q-total{font-size:32px;font-weight:500;font-family:var(--font-heading);color:#fff;line-height:1;}
+.q-monthly{font-size:10pt;color:rgba(255,255,255,.4);margin-top:5px;font-family:var(--mono)}
 
 /* 3-year bars */
 .q-3yr{padding:0 1.25rem 1rem}
@@ -207,11 +262,11 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .yr-bar-row{display:flex;align-items:center;gap:10px}
 .yr-bar-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.5);width:40px;flex-shrink:0;font-family:var(--mono)}
 .yr-bar-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
-.yr-bar-fill{height:100%;background:var(--blue-lt);border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.yr-bar-fill{height:100%;background:#5E96F3;border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
 .yr-bar-val{font-size:11px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.65);width:72px;text-align:right;flex-shrink:0}
 .q-3yr-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
 .q-3yr-total-label{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-.q-3yr-total-val{font-size:16px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.75)}
+.q-3yr-total-val{font-size:16px;font-family:var(--mono);font-weight:500;color:#A8C8FF}
 .q-3yr-avg{font-size:10px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:1px;text-align:right}
 
 /* Layer breakdown in quote */
@@ -221,14 +276,14 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .q-layer-row.grand{background:rgba(255,255,255,.08);margin-top:4px}
 .q-layer-left{display:flex;align-items:center;gap:8px}
 .q-layer-pill{font-size:8px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 6px;border-radius:20px;text-transform:uppercase;flex-shrink:0}
-.qlp-slate {background:rgba(61,81,102,.5);  color:#9BB5CC}
-.qlp-blue  {background:rgba(35,89,204,.3);  color:#89AAEE}
-.qlp-teal  {background:rgba(13,140,124,.3); color:#6ECFC5}
-.qlp-amber {background:rgba(196,122,21,.3); color:#E5B46A}
-.qlp-purple{background:rgba(106,72,201,.3); color:#B59EE8}
-.qlp-grand {background:rgba(255,255,255,.1);color:#fff}
-.q-layer-name{font-size:11px;color:rgba(255,255,255,.6)}
-.q-layer-row.grand .q-layer-name{font-weight:600;color:#fff;font-size:12px}
+.qlp-slate {background:rgba(71,85,105,.5);   color:#CBD5E1}
+.qlp-blue  {background:rgba(56,123,240,.3);  color:#A8C8FF}
+.qlp-teal  {background:rgba(87,216,115,.3);   color:#57D873}
+.qlp-amber {background:rgba(217,119,6,.3);   color:#FCD34D}
+.qlp-purple{background:rgba(239,114,231,.2);  color:#EF72E7}
+.qlp-grand {background:rgba(255,255,255,.1); color:#fff}
+.q-layer-name{font-size:11pt;font-family:var(--font);color:rgba(255,255,255,.6)}
+.q-layer-row.grand .q-layer-name{font-weight:600;color:#fff;font-size:12pt;font-family:var(--font-heading)}
 .q-layer-val{font-size:12px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.75)}
 .q-layer-row.grand .q-layer-val{font-size:14px;color:#fff;font-weight:600}
 .q-layer-empty{font-size:11px;color:rgba(255,255,255,.2);font-style:italic}
@@ -240,21 +295,21 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .q-rate-val{font-size:14px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.8)}
 .q-rate-desc{font-size:10px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:-4px;margin-bottom:8px}
 .q-rate-track{height:3px;background:rgba(255,255,255,.08);border-radius:99px}
-.q-rate-fill{height:100%;background:linear-gradient(90deg,var(--blue-lt),var(--teal));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.q-rate-fill{height:100%;background:linear-gradient(90deg,#387BF0,#5E96F3);border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
 .q-rate-ticks{display:flex;justify-content:space-between;margin-top:5px}
 .q-rate-tick{font-size:8.5px;font-family:var(--mono);color:rgba(255,255,255,.2)}
 
 /* Breakdown accordion in quote */
 .q-breakdown{border-top:1px solid rgba(255,255,255,.07);margin-top:auto}
 .q-bk-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.07)}
-.q-bk-tab{flex:1;padding:9px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.3);cursor:pointer;transition:color .15s,background .15s;border:none;background:none;font-family:var(--font)}
+.q-bk-tab{flex:1;padding:9px;text-align:center;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.35);cursor:pointer;transition:color .15s,background .15s;border:none;background:none;font-family:var(--font)}
 .q-bk-tab:hover{color:rgba(255,255,255,.6)}
-.q-bk-tab.active{color:#fff;background:rgba(255,255,255,.06)}
+.q-bk-tab.active{color:#fff;background:rgba(56,123,240,.2)}
 .q-bk-body{padding:.75rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:0}
 .bk-grp{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 0 4px}
 .bk-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .bk-row:last-of-type{border-bottom:none}
-.bk-row-label{font-size:11px;color:rgba(255,255,255,.55)}
+.bk-row-label{font-size:11pt;font-family:var(--font);color:rgba(255,255,255,.6)}
 .bk-row-detail{font-size:9px;color:rgba(255,255,255,.25);margin-top:1px}
 .bk-row-val{font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.65);text-align:right;flex-shrink:0;margin-left:8px}
 .bk-row-val3{font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.45);text-align:right;flex-shrink:0;margin-left:8px}
@@ -262,11 +317,11 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .bk-sub-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.7)}
 .bk-sub-val{font-size:11px;font-weight:600;font-family:var(--mono);color:rgba(255,255,255,.7)}
 .bk-grand{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid rgba(255,255,255,.15);margin-top:6px}
-.bk-disc-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-top:1px solid rgba(192,57,43,.2);margin-top:4px}
+.bk-disc-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-top:1px solid rgba(220,38,38,.2);margin-top:4px}
 .bk-disc-label{font-size:11px;font-weight:600;color:#FF9085}
 .bk-disc-val{font-size:12px;font-weight:600;font-family:var(--mono);color:#FF9085}
-.bk-grand-label{font-size:12px;font-weight:700;color:#fff}
-.bk-grand-val{font-size:14px;font-weight:700;font-family:var(--mono);color:#fff}
+.bk-grand-label{font-size:12pt;font-weight:600;font-family:var(--font-heading);color:#fff}
+.bk-grand-val{font-size:14pt;font-weight:600;font-family:var(--mono);color:#fff}
 .bk-yr-note{font-size:10px;color:rgba(255,255,255,.2);line-height:1.55;margin-top:10px;font-style:italic}
 .bk-cols{display:flex;justify-content:space-between;gap:8px}
 .bk-col-head{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.25);text-align:right}
@@ -276,14 +331,58 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 
 <header class="hdr">
   <div class="hdr-left">
-    <div class="hdr-dot"></div>
-    <span class="hdr-name">Opus · Pricing Calculator</span>
+    <img src="https://mintcdn.com/appliedai-7127e5be/1HrYRfGIm-8nxQ5A/images/light-logo.svg" alt="Opus by AppliedAI" style="height:24px;width:auto;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="hdr-fallback" style="display:none;align-items:center;gap:10px">
+      <div class="hdr-dot"></div>
+      <span class="hdr-name">Opus · Pricing Calculator</span>
+    </div>
   </div>
   <div class="hdr-right">
-    <span class="chip chip-green">3-Year Term</span>
+    <span class="chip chip-green" id="hdrTermChip">3-Year Term</span>
     <span class="chip-muted">v2.0 · Internal</span>
   </div>
 </header>
+
+<div class="app-wrap">
+
+<!-- ── TERM SELECTOR BAR ── -->
+<div class="term-bar">
+  <span class="term-bar-label">Contract term</span>
+  <div class="term-options">
+
+    <div class="term-opt term-disabled" id="term1yr" onclick="setTerm('1yr')">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="term-opt-name">1-Year</span>
+          <span class="term-badge">Coming Soon</span>
+        </div>
+        <div class="term-opt-sub">+20% on L1 &amp; L3</div>
+      </div>
+    </div>
+
+    <div class="term-opt term-active" id="term3yr" onclick="setTerm('3yr')">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="term-opt-name">3-Year</span>
+          <span style="font-size:9px;font-weight:600;font-family:var(--mono);padding:2px 6px;border-radius:10px;background:#DCFCE7;color:#166534;border:1px solid #86EFAC">Active</span>
+        </div>
+        <div class="term-opt-sub">Standard pricing</div>
+      </div>
+    </div>
+
+    <div class="term-opt term-disabled" id="term5yr" onclick="setTerm('5yr')">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="term-opt-name">5-Year</span>
+          <span class="term-badge">Coming Soon</span>
+        </div>
+        <div class="term-opt-sub">−15% on L1 &amp; L3</div>
+      </div>
+    </div>
+
+  </div>
+  <span class="term-note" id="termNote">1-year and 5-year terms are not yet available — pricing structure is in place for future activation.</span>
+</div>
 
 <div class="app">
 
@@ -310,7 +409,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
   <div class="nav-section-label">Execution</div>
   <a class="nav-item" onclick="scrollTo('s3')">
     <span class="nav-badge nb-amber">L3</span>
-    <div><div class="nav-label">Decision & Exec</div><div class="nav-sub">$0.75–$4.00 / txn</div></div>
+    <div><div class="nav-label">Decision & Exec</div><div class="nav-sub">$0.75–$4.00 / execution</div></div>
   </a>
   <div class="nav-divider"></div>
   <div class="nav-section-label">Add-ons</div>
@@ -384,7 +483,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
       <div class="tog sw-blue" id="toggleL1" onclick="toggleL1()">
         <div class="tog-left">
           <div class="tog-name">Platform Subscription</div>
-          <div class="tog-sub">$160,000 / yr · 3-year term · locked pricing</div>
+          <div class="tog-sub" id="l1ToggleSub">$160,000 / yr · 3-year term · locked pricing</div>
         </div>
         <span class="tog-price blue-price">$160,000 / yr</span>
         <div class="sw"></div>
@@ -392,27 +491,21 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
       <div id="l1Details" style="display:none;flex-direction:column;gap:.875rem">
         <div class="commit-banner">
           <span class="commit-icon">&#128274;</span>
-          <span class="commit-txt">Priced on a <strong>3-year term</strong>. The $160,000 annual fee is locked for the life of the contract.</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="field">
-            <span class="flabel">Platform licence</span>
-            <span class="fstatic">$130,000 / yr</span>
-          </div>
-          <div class="field">
-            <span class="flabel">Production environment</span>
-            <span class="fstatic">$30,000 / yr</span>
-          </div>
+          <span class="commit-txt">Priced on a <strong id="l1TermLabel">3-year term</strong>. The platform fee is locked for the life of the contract.</span>
         </div>
         <div class="field">
-          <label class="flabel">Additional environments</label>
+          <span class="flabel">Platform fee (includes 1 production environment)</span>
+          <span class="fstatic" id="l1FeeDisplay">$160,000 / yr</span>
+        </div>
+        <div class="field">
+          <label class="flabel">Additional environments <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#57D873;font-size:9px;font-family:var(--mono)">· one-time · $20,000 each</span></label>
           <select id="addEnv" onchange="calc()">
-            <option value="0">None — production only</option>
-            <option value="1">+1 environment — $30,000 / yr</option>
-            <option value="2">+2 environments — $60,000 / yr</option>
-            <option value="3">+3 environments — $90,000 / yr</option>
+            <option value="0">None</option>
+            <option value="1">+1 environment — $20,000 one-time</option>
+            <option value="2">+2 environments — $40,000 one-time</option>
+            <option value="3">+3 environments — $60,000 one-time</option>
           </select>
-          <span class="note">Staging, testing, UAT, or disaster recovery. Each billed at $30K/yr alongside the platform term.</span>
+          <span class="note">Staging, testing, UAT, or disaster recovery. One-time setup cost per environment — not an annual recurring charge.</span>
         </div>
       </div>
     </div>
@@ -435,6 +528,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
       <div class="vp"><span class="vp-dot vd-teal"></span>Opus delivery squad works directly alongside the client's team</div>
       <div class="vp"><span class="vp-dot vd-teal"></span>Full ownership of design, build, testing, and go-live — end to end</div>
       <div class="vp"><span class="vp-dot vd-teal"></span>Scope by use case count or time-boxed engagement — client's choice</div>
+      <div class="vp"><span class="vp-dot vd-teal"></span>Each use case supports up to 30 nodes and 10 Opus native integrations, or 3 bespoke API integrations with JSON payloads</div>
     </div>
     <div class="sec-body">
       <div class="field">
@@ -473,7 +567,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
         <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
     </div>
-    <p class="sec-desc">Usage-based pricing tied directly to production outcomes. Every decision made and action executed by the platform is counted. Commit to higher volumes and the per-transaction rate drops — the more you automate, the less each execution costs.</p>
+    <p class="sec-desc">Usage-based pricing directly tied to workflow executions in production. Every time a workflow runs — capturing all decisions and actions executed by the platform — it is counted as a single billable unit. As you commit to higher execution volumes, the cost per workflow run decreases. In simple terms: the more workflows you execute, the cheaper each execution becomes.</p>
     <div class="vp-list">
       <div class="vp"><span class="vp-dot vd-amber"></span>Pricing aligned to value — you pay for outcomes, not seats</div>
       <div class="vp"><span class="vp-dot vd-amber"></span>Five volume tiers from 100K to 2.5M executions per year</div>
@@ -679,29 +773,29 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
     </div>
   </div>
 
-  <!-- 3-year bars -->
+  <!-- Term bars (always show 3 bars; 5yr shows 5 via Year 4/5 in breakdown) -->
   <div class="q-3yr">
-    <div class="q-3yr-label">3-Year view</div>
+    <div class="q-3yr-label" id="q3yrLabel">3-Year view</div>
     <div class="yr-bars">
       <div class="yr-bar-row">
-        <span class="yr-bar-name">Yr 1</span>
+        <span class="yr-bar-name" id="qBarLabel1">Yr 1</span>
         <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar1" style="width:100%"></div></div>
         <span class="yr-bar-val" id="qYr1">$160,000</span>
       </div>
       <div class="yr-bar-row">
-        <span class="yr-bar-name">Yr 2</span>
+        <span class="yr-bar-name" id="qBarLabel2">Yr 2</span>
         <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar2" style="width:100%"></div></div>
         <span class="yr-bar-val" id="qYr2">$160,000</span>
       </div>
       <div class="yr-bar-row">
-        <span class="yr-bar-name">Yr 3</span>
+        <span class="yr-bar-name" id="qBarLabel3">Yr 3</span>
         <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar3" style="width:100%"></div></div>
         <span class="yr-bar-val" id="qYr3">$160,000</span>
       </div>
     </div>
     <div class="q-3yr-total">
       <div>
-        <div class="q-3yr-total-label">3-Year total</div>
+        <div class="q-3yr-total-label" id="q3yrTotalLabel">Total 3-Year Contract Value</div>
         <div class="q-3yr-avg" id="q3yrAvg">— blended avg</div>
       </div>
       <div class="q-3yr-total-val" id="q3yrTotal">$480,000</div>
@@ -719,6 +813,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 
 </aside>
 </div><!-- /app -->
+</div><!-- /app-wrap -->
 
 <script>
 const TIERS=[
@@ -761,7 +856,15 @@ let selTier=null,selUC=null,selOpus=null,certImplQty=1;
 let l0=false, l1=false;
 let vas={support:false,enablAdv:false,enablEnt:false,certImpl:false,certPartner:false};
 let bkTab='annual';
-let discCadence='once'; // 'once' | 'recurring'
+let discCadence='once';
+let activeTerm='3yr'; // '1yr' | '3yr' | '5yr'
+
+// Term configuration — update rates here when 1yr/5yr launch
+const TERMS = {
+  '1yr': { label:'1-Year', years:1,  l1Multiplier:1.20, l3Multiplier:1.20, launched:false },
+  '3yr': { label:'3-Year', years:3,  l1Multiplier:1.00, l3Multiplier:1.00, launched:true  },
+  '5yr': { label:'5-Year', years:5,  l1Multiplier:0.85, l3Multiplier:0.85, launched:false },
+}; // 'once' | 'recurring'
 
 const $=id=>document.getElementById(id);
 function fmt(n){if(n===null||n===undefined)return'—';if(n===0)return'$0';return'$'+Math.round(n).toLocaleString('en-US');}
@@ -785,13 +888,17 @@ function scrollTo(id){
 
 function buildTierCards(){
   const w=$('tierCards');w.innerHTML='';
+  const mult=TERMS[activeTerm].l3Multiplier;
   TIERS.forEach((t,i)=>{
-    const total=Math.round(t.vol*t.rate);
+    const effectiveRate=t.rate*mult;
+    const total=Math.round(t.vol*effectiveRate);
     const d=document.createElement('div');
     d.className='tc'+(selTier===i?' active':'');
-    d.innerHTML=`<div class="tc-name">${t.name}</div><div class="tc-vol">${fvol(t.vol)}</div><div class="tc-rate">$${t.rate.toFixed(2)}/txn</div><div class="tc-total">${fmt(total)}/yr</div>`;
+    const rateStr=mult===1?`$${t.rate.toFixed(2)}/execution`:`$${effectiveRate.toFixed(2)}/execution`;
+    d.innerHTML=`<div class="tc-name">${t.name}</div><div class="tc-vol">${fvol(t.vol)}</div><div class="tc-rate">${rateStr}</div><div class="tc-total">${fmt(total)}/yr</div>`;
     d.onclick=()=>{
-      selTier=(selTier===i)?null:i; // toggle: click active to deselect
+      selTier=(selTier===i)?null:i;
+      if(selTier!==null) ensureL1();
       buildTierCards();calc();
     };
     w.appendChild(d);
@@ -839,15 +946,33 @@ function buildPkgCards(wrapId,pkgs,sel,cb,showUnit){
 let ucCb,opusCb;
 function initPkgCards(){
   ucCb=(i)=>{
-    selUC=(selUC===i)?null:i; // toggle to deselect
+    selUC=(selUC===i)?null:i;
+    if(selUC!==null) ensureL1();
     buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);calc();
   };
   opusCb=(i)=>{
-    selOpus=(selOpus===i)?null:i; // toggle to deselect
+    selOpus=(selOpus===i)?null:i;
+    if(selOpus!==null) ensureL1();
     buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);calc();
   };
   buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);
   buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);
+}
+
+function setTerm(t){
+  const cfg=TERMS[t];
+  if(!cfg.launched) return;
+  activeTerm=t;
+  Object.keys(TERMS).forEach(k=>{
+    $('term'+k).classList.toggle('term-active',k===t);
+    $('term'+k).classList.toggle('term-disabled',!TERMS[k].launched);
+  });
+  $('termNote').textContent=
+    TERMS['1yr'].launched&&TERMS['5yr'].launched
+      ? ''
+      : '1-year and 5-year terms are not yet available — pricing structure is in place for future activation.';
+  buildTierCards(); // refresh rates on cards
+  calc();
 }
 
 function toggleL1(){
@@ -871,11 +996,20 @@ function toggleL0(){
   calc();
 }
 
+function ensureL1(){
+  if(!l1){
+    l1=true;
+    $('toggleL1').classList.add('on');
+    $('l1Details').style.display='flex';
+  }
+}
+
 function toggleL2(){
   const v=$('l2model').value;
   $('l2ucWrap').style.display  =v==='uc'  ?'block':'none';
   $('l2opusWrap').style.display=v==='opus'?'block':'none';
   if(v==='self'){selUC=null;selOpus=null;initPkgCards();}
+  else ensureL1();
 }
 
 function toggleVAS(key){
@@ -883,6 +1017,7 @@ function toggleVAS(key){
   const cap=key.charAt(0).toUpperCase()+key.slice(1);
   $('toggle'+cap).classList.toggle('on',vas[key]);
   if(key==='certImpl') $('certImplQtyWrap').style.display=vas[key]?'flex':'none';
+  if(vas[key]) ensureL1();
   calc();
 }
 
@@ -951,8 +1086,14 @@ function getDiscount(base){
 function calc(){
   const addEnv=l1?parseInt($('addEnv').value):0;
   const l2model=$('l2model').value;
+  const term=TERMS[activeTerm];
 
-  const l1Annual=l1?(160000+(addEnv*30000)):0;
+  // Environment cost is one-time ($20K each), not annual
+  const envOneTimeCost = addEnv * 20000;
+
+  // Apply term multipliers to base rates (environments excluded — one-time flat cost)
+  const l1BaseAnnual = l1 ? Math.round(160000 * term.l1Multiplier) : 0;
+  const l1Annual = l1BaseAnnual;
   const l0Amt=l0?35000:0;
 
   let l2Total=0,l2Label='';
@@ -960,7 +1101,7 @@ function calc(){
   if(l2model==='opus'&&selOpus!==null){l2Total=OPUS_PKGS[selOpus].price;l2Label='Opus Squad · '+OPUS_PKGS[selOpus].desc;}
 
   const t=selTier!==null?TIERS[selTier]:null;
-  const l3Annual=t?Math.round(t.vol*t.rate):0;
+  const l3Annual=t?Math.round(t.vol * t.rate * term.l3Multiplier):0;
 
   const supportAmt    =vas.support    ?Math.round((l1Annual+l3Annual)*0.20):0;
   const enablAdvAmt   =vas.enablAdv   ?30000:0;
@@ -973,9 +1114,8 @@ function calc(){
 
   // Gross year totals before discount
   const recurAnnual=l1Annual+l3Annual+vasRecurring;
-  const yr1Gross=recurAnnual+l0Amt+l2Total+vasOneTime;
-  const yr2Gross=recurAnnual;
-  const yr3Gross=recurAnnual;
+  const yr1Gross=recurAnnual+l0Amt+l2Total+vasOneTime+envOneTimeCost;
+  const yrRecurGross=recurAnnual; // recurring-only years (no env cost)
 
   // Discount base — which layers are targeted
   const discBaseYr1=getDiscountBase(l0Amt,l1Annual,l2Total,l3Annual,vasAnnual);
@@ -992,19 +1132,35 @@ function calc(){
     $('discAmt').value=discAmt>0?discAmt:'';
   }
 
-  // Annual recurring discount (for yr2, yr3) — only if cadence is recurring
+  // Annual recurring discount — only if cadence is recurring
   const discRecurringAmt=discCadence==='recurring'&&discPct>0
     ? Math.round(discBaseRecurring*(discPct/100)):0;
 
   const yr1=yr1Gross-discAmt;
-  const yr2=yr2Gross-discRecurringAmt;
-  const yr3=yr3Gross-discRecurringAmt;
+  const yrRecur=yrRecurGross-discRecurringAmt; // value for years 2..N
+  // Build per-year array based on active term
+  const termYears=term.years;
+  const allYears=[yr1, ...Array(termYears-1).fill(yrRecur)];
+  const totalTerm=allYears.reduce((s,v)=>s+v,0);
+  const avgTerm=Math.round(totalTerm/termYears);
+
+  // Keep legacy yr2/yr3 vars for 3yr display (always show 3 bars)
+  const yr2=termYears>=2?yrRecur:yrRecur;
+  const yr3=termYears>=3?yrRecur:yrRecur;
   const total3=yr1+yr2+yr3;
   const avg3=Math.round(total3/3);
 
   // ── Nav section metas
   $('s0meta').textContent=l0?'$35,000':'Not included';
-  $('s1meta').textContent=l1?(fmt(l1Annual)+' / yr'):'Not selected';
+  $('s1meta').textContent=l1?(fmt(l1Annual)+' / yr · '+term.label.toLowerCase()):'Not selected';
+  // Update nav sub for L1 term
+  const l1NavSub=document.querySelector('#term3yr .term-opt-sub') ? null : null; // handled via term bar
+  // Update L1 toggle sub-text with current term and multiplier note
+  const l1ToggleSub=$('l1ToggleSub');
+  if(l1ToggleSub){
+    const multNote=term.l1Multiplier!==1?' · '+(term.l1Multiplier>1?'+':'')+(Math.round((term.l1Multiplier-1)*100))+'% vs 3yr rate':'';
+    l1ToggleSub.textContent=`${fmt(l1Annual)} / yr · ${term.label.toLowerCase()} · locked pricing${multNote}`;
+  }
   const l2meta=l2model==='self'?'Self-serve':(l2Total>0?fmt(l2Total):'Select package');
   $('s2meta').textContent=l2meta;
   $('s3meta').textContent=t?`${fvol(t.vol)} · ${fmt(l3Annual)}/yr`:'No tier selected';
@@ -1054,7 +1210,7 @@ function calc(){
   if(t){
     const pct=100-(selTier/(TIERS.length-1))*82;
     $('qRateFill').style.width=Math.round(pct)+'%';
-    $('qRate').textContent='$'+t.rate.toFixed(2)+' / txn';
+    $('qRate').textContent='$'+t.rate.toFixed(2)+' / execution';
     $('qRateDesc').textContent=`${fvol(t.vol)} executions · ${t.name} tier · ${fmt(l3Annual)} / yr`;
   } else {
     $('qRateFill').style.width='0%';
@@ -1062,16 +1218,27 @@ function calc(){
     $('qRateDesc').textContent='Select a volume tier';
   }
 
-  // ── 3yr bars
+  // ── Term bars (always show 3 bars regardless of term, label dynamically)
   const maxYr=Math.max(yr1,yr2,yr3)||1;
   $('qBar1').style.width=Math.round((yr1/maxYr)*100)+'%';
   $('qBar2').style.width=Math.round((yr2/maxYr)*100)+'%';
   $('qBar3').style.width=Math.round((yr3/maxYr)*100)+'%';
   $('qYr1').textContent=fmt(yr1);
-  $('qYr2').textContent=fmt(yr2);
-  $('qYr3').textContent=fmt(yr3);
-  $('q3yrTotal').textContent=fmt(total3);
-  $('q3yrAvg').textContent=fmt(avg3)+' blended avg';
+  $('qYr2').textContent=termYears>=2?fmt(yr2):'—';
+  $('qYr3').textContent=termYears>=3?fmt(yr3):'—';
+  // Update year bar labels
+  $('qBarLabel1').textContent='Yr 1';
+  $('qBarLabel2').textContent=termYears>=2?'Yr 2':'—';
+  $('qBarLabel3').textContent=termYears>=3?'Yr 3':'—';
+  // Update the term summary label
+  $('q3yrLabel').textContent=`${termYears}-Year view`;
+  $('q3yrTotalLabel').textContent=`Total ${termYears}-Year Contract Value`;
+  $('q3yrTotal').textContent=fmt(totalTerm);
+  $('q3yrAvg').textContent=fmt(avgTerm)+' blended avg / yr';
+  // Update header chip and breakdown tab
+  $('hdrTermChip').textContent=term.label+' Term';
+  // Update commit banner text in L1
+  if($('l1TermLabel')) $('l1TermLabel').textContent=`${termYears}-year term`;
 
   // ── Breakdown
   const is3=bkTab==='3yr';
@@ -1084,12 +1251,16 @@ function calc(){
   }
 
   if(l1){
-    rows.push({type:'grp',label:'Layer 1 — Platform · 3-Year Term'});
-    rows.push({label:'Platform licence',detail:'Fixed · ×3 years',val:fmt(130000),val3:fmt(130000*3)});
-    rows.push({label:'Production environment',detail:'Bundled · ×3 years',val:fmt(30000),val3:fmt(30000*3)});
-    if(addEnv>0) rows.push({label:`Additional environments ×${addEnv}`,detail:`$${(30000*addEnv).toLocaleString()}/yr · ×3`,val:fmt(addEnv*30000),val3:fmt(addEnv*30000*3)});
-    rows.push({type:'sub',label:'Subtotal',val:fmt(l1Annual),val3:fmt(l1Annual*3)});
+    const termLabel=`Layer 1 — Platform · ${termYears}-Year Term${term.l1Multiplier!==1?' ('+( term.l1Multiplier>1?'+':'')+(Math.round((term.l1Multiplier-1)*100))+'% rate)':''}`;
+    rows.push({type:'grp',label:termLabel});
+    rows.push({label:'Platform fee (incl. production environment)',detail:`Fixed · ×${termYears} years`,val:fmt(l1Annual),val3:fmt(l1Annual*termYears)});
+    if(addEnv>0) rows.push({label:`Additional environments ×${addEnv}`,detail:`$20,000 × ${addEnv} · one-time`,val:fmt(envOneTimeCost),val3:fmt(envOneTimeCost)});
+    const l1SubYr1=l1Annual+(addEnv>0?envOneTimeCost:0);
+    const l1SubTotal=l1Annual*termYears+(addEnv>0?envOneTimeCost:0);
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l1SubYr1),val3:fmt(l1SubTotal)});
   }
+  // Update platform fee display to reflect term multiplier
+  if($('l1FeeDisplay')) $('l1FeeDisplay').textContent=fmt(l1Annual)+' / yr';
 
   if(l2Total>0){
     rows.push({type:'grp',label:'Layer 2 — Implementation · Year 1'});
@@ -1100,44 +1271,50 @@ function calc(){
 
   if(t){
     rows.push({type:'grp',label:'Layer 3 — Decision & Execution · Annual'});
-    rows.push({label:`${fvol(t.vol)} executions × $${t.rate.toFixed(2)}`,detail:`${t.name} tier · recurring`,val:fmt(l3Annual),val3:fmt(l3Annual*3)});
-    rows.push({type:'sub',label:'Subtotal',val:fmt(l3Annual),val3:fmt(l3Annual*3)});
+    const l3Rate=(t.rate*term.l3Multiplier).toFixed(2);
+    rows.push({label:`${fvol(t.vol)} executions × $${l3Rate}`,detail:`${t.name} tier · recurring`,val:fmt(l3Annual),val3:fmt(l3Annual*termYears)});
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l3Annual),val3:fmt(l3Annual*termYears)});
   }
 
   if(vasAnnual>0){
     rows.push({type:'grp',label:'Add-ons & Value-Added Services'});
-    if(vas.support)      rows.push({label:'Premium 24/7 Support',detail:`20% × ${fmt(l1Annual+l3Annual)} · recurring`,val:fmt(supportAmt),val3:fmt(supportAmt*3)});
+    if(vas.support)      rows.push({label:'Premium 24/7 Support',detail:`20% × ${fmt(l1Annual+l3Annual)} · recurring`,val:fmt(supportAmt),val3:fmt(supportAmt*termYears)});
     if(vas.enablAdv)     rows.push({label:'Advanced Enablement',detail:'One-time · Year 1',val:fmt(enablAdvAmt),val3:fmt(enablAdvAmt)});
     if(vas.enablEnt)     rows.push({label:'Enterprise Academy',detail:'One-time · Year 1',val:fmt(enablEntAmt),val3:fmt(enablEntAmt)});
     if(vas.certImpl)     rows.push({label:`Certified Opus Implementer ×${certImplQty}`,detail:`$15,000 × ${certImplQty} · one-time`,val:fmt(certImplAmt),val3:fmt(certImplAmt)});
     if(vas.certPartner)  rows.push({label:'Certified Opus Partner',detail:'One-time · Year 1',val:fmt(certPartnerAmt),val3:fmt(certPartnerAmt)});
-    const vasTrue3yr=vasRecurring*3+vasOneTime;
-    rows.push({type:'sub',label:'Subtotal',val:fmt(vasAnnual),val3:fmt(vasTrue3yr)});
+    const vasTrueTerm=vasRecurring*termYears+vasOneTime;
+    rows.push({type:'sub',label:'Subtotal',val:fmt(vasAnnual),val3:fmt(vasTrueTerm)});
   }
 
   if(is3){
-    rows.push({type:'grp',label:'Year-by-Year'});
-    const yr1Parts=[l0Amt>0?'Value Sprint':null,l2Total>0?'Layer 2':null,vasOneTime>0?'one-time add-ons':null,hasDisc?`−${fmt(discAmt)} discount`:null].filter(Boolean).join(' + ');
+    rows.push({type:'grp',label:'Year-by-Year Summary'});
+    const yr1Parts=[l0Amt>0?'Value Sprint':null,envOneTimeCost>0?`environments (+${addEnv})`:null,l2Total>0?'Layer 2':null,vasOneTime>0?'one-time add-ons':null,hasDisc?`−${fmt(discAmt)} discount`:null].filter(Boolean).join(' + ');
     rows.push({label:'Year 1',detail:yr1Parts||'Recurring only',val:fmt(yr1),val3:''});
-    rows.push({label:'Year 2',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr2),val3:''});
-    rows.push({label:'Year 3',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr3),val3:''});
+    if(termYears>=2) rows.push({label:'Year 2',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr2),val3:''});
+    if(termYears>=3) rows.push({label:'Year 3',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr3),val3:''});
+    if(termYears===5){
+      rows.push({label:'Year 4',detail:'Recurring only',val:fmt(yrRecur),val3:''});
+      rows.push({label:'Year 5',detail:'Recurring only',val:fmt(yrRecur),val3:''});
+    }
   }
 
   if(hasDisc){
-    const discDetail=discCadence==='recurring'?`${discPct}% · recurring all 3 years`:`${discPct}% · Year 1 only`;
-    rows.push({type:'disc',label:`Discount — ${discDetail}`,val:`−${fmt(discAmt)}`,val3:`−${fmt(discAmt+(discRecurringAmt*2))}`});
+    const recurringYears=termYears-1;
+    const discDetail=discCadence==='recurring'?`${discPct}% · recurring all ${termYears} years`:`${discPct}% · Year 1 only`;
+    rows.push({type:'disc',label:`Discount — ${discDetail}`,val:`−${fmt(discAmt)}`,val3:`−${fmt(discAmt+(discRecurringAmt*recurringYears))}`});
   }
 
-  const grandLabel=is3?'Total Contract Value — 3 Years':'Year 1 Total';
-  rows.push({type:'grand',label:grandLabel,val:is3?fmt(total3):fmt(yr1),val3:is3?'':fmt(total3)});
+  const grandLabel=is3?`Total Contract Value — ${termYears} Years`:'Year 1 Total';
+  rows.push({type:'grand',label:grandLabel,val:is3?fmt(totalTerm):fmt(yr1),val3:is3?'':fmt(totalTerm)});
 
-  const hasOneTime=l0Amt>0||l2Total>0||vasOneTime>0;
+  const hasOneTime=l0Amt>0||l2Total>0||vasOneTime>0||envOneTimeCost>0;
 
   $('qBkBody').innerHTML=rows.map(r=>{
     if(r.type==='grp') return `<div class="bk-grp">${r.label}</div>`;
     if(r.type==='sub') return `<div class="bk-sub"><span class="bk-sub-label">${r.label}</span><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-sub-val">${r.val3}</span>`:`<span class="bk-sub-val">${r.val}</span>`}</div></div>`;
     if(r.type==='disc') return `<div class="bk-disc-row"><span class="bk-disc-label">${r.label}</span><span class="bk-disc-val">${r.val}</span></div>`;
-    if(r.type==='grand') return `<div class="bk-grand"><span class="bk-grand-label">${r.label}</span><span class="bk-grand-val">${r.val}</span></div>${hasOneTime?'<div class="bk-yr-note">Value Sprint, Layer 2, enablement programmes, and certifications are one-time investments in Year 1. Layer 1, Layer 3, and Premium Support recur annually.</div>':''}`;
+    if(r.type==='grand') return `<div class="bk-grand"><span class="bk-grand-label">${r.label}</span><span class="bk-grand-val">${r.val}</span></div>${hasOneTime?'<div class="bk-yr-note">Value Sprint, additional environments, Layer 2 delivery, enablement programmes, and certifications are one-time costs in Year 1. Layer 1, Layer 3, and Premium Support recur annually.</div>':''}`;
     return `<div class="bk-row"><div><div class="bk-row-label">${r.label}</div><div class="bk-row-detail">${r.detail||''}</div></div><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-row-val">${r.val3||''}</span>`:`<span class="bk-row-val">${r.val}</span>`}</div></div>`;
   }).join('');
 }
