@@ -169,8 +169,8 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
 .gm-panel-title{font-size:12pt;font-weight:500;font-family:var(--font-heading);color:var(--black);display:flex;align-items:center;gap:8px}
 .gm-badge{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;padding:2px 8px;border-radius:20px;background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5}
 .gm-panel-body{padding:.875rem 1.25rem;display:flex;flex-direction:column;gap:.5rem}
-.gm-row{display:grid;grid-template-columns:160px 80px 100px 120px 90px 90px 72px;gap:8px;align-items:center}
-.gm-row-head{display:grid;grid-template-columns:160px 80px 100px 120px 90px 90px 72px;gap:8px;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.gm-row{display:grid;grid-template-columns:160px 80px 100px 120px 90px 90px 90px 72px;gap:8px;align-items:center}
+.gm-row-head{display:grid;grid-template-columns:160px 80px 100px 120px 90px 90px 90px 72px;gap:8px;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:2px}
 .gm-col-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mid-grey);font-family:var(--font)}
 .gm-layer-name{font-size:11pt;font-weight:500;font-family:var(--font);color:var(--dark-grey)}
 .gm-input{width:100%;font-family:var(--mono);font-size:11pt;color:var(--black);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:5px 8px;transition:border-color .15s;-moz-appearance:textfield}
@@ -185,6 +185,8 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
 .gm-val{font-size:11pt;font-weight:600;font-family:var(--mono);color:var(--dark-grey);padding:5px 4px}
 .gm-val.positive{color:#166534}
 .gm-val.negative{color:#DC2626}
+.gm-disc-dollar{font-size:11pt;font-weight:500;font-family:var(--mono);padding:5px 4px;color:var(--mid-grey)}
+.gm-disc-dollar.has-disc{color:#DC2626;font-weight:600}
 .gm-disc-impact{font-size:11pt;font-weight:500;font-family:var(--mono);padding:5px 4px;color:var(--mid-grey)}
 .gm-disc-impact.has-disc{color:#DC2626}
 #gmr_total{background:var(--extra-light-grey);border-radius:var(--r-sm);padding:6px 8px;margin-top:2px}
@@ -755,6 +757,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <span class="gm-col-label">FTE</span>
       <span class="gm-col-label">Effort (wks)</span>
       <span class="gm-col-label">Cost (USD)</span>
+      <span class="gm-col-label">Disc. $</span>
       <span class="gm-col-label">GM $</span>
       <span class="gm-col-label">Disc. Impact</span>
       <span class="gm-col-label">GM%</span>
@@ -766,6 +769,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_l1_fte"    value="3"     min="0" step="1"    oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_l1_weeks"  value=""      min="0" step="1"   placeholder="–" oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_l1_cost"   value="30000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_l1_discamt">—</div>
       <div class="gm-val" id="gm_l1_val">—</div>
       <div class="gm-disc-impact" id="gm_l1_disc">—</div>
       <div class="gm-pct" id="gm_l1_pct">—</div>
@@ -779,6 +783,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_ucS_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucS_weeks" value="5"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucS_cost"  value="36000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_ucS_discamt">—</div>
       <div class="gm-val" id="gm_ucS_val">—</div>
       <div class="gm-disc-impact" id="gm_ucS_disc">—</div>
       <div class="gm-pct" id="gm_ucS_pct">—</div>
@@ -788,6 +793,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_ucG_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucG_weeks" value="7"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucG_cost"  value="48000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_ucG_discamt">—</div>
       <div class="gm-val" id="gm_ucG_val">—</div>
       <div class="gm-disc-impact" id="gm_ucG_disc">—</div>
       <div class="gm-pct" id="gm_ucG_pct">—</div>
@@ -797,6 +803,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_ucSc_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucSc_weeks" value="9"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_ucSc_cost"  value="60000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_ucSc_discamt">—</div>
       <div class="gm-val" id="gm_ucSc_val">—</div>
       <div class="gm-disc-impact" id="gm_ucSc_disc">—</div>
       <div class="gm-pct" id="gm_ucSc_pct">—</div>
@@ -810,6 +817,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_opP_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opP_weeks" value="16"    min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opP_cost"  value="96000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_opP_discamt">—</div>
       <div class="gm-val" id="gm_opP_val">—</div>
       <div class="gm-disc-impact" id="gm_opP_disc">—</div>
       <div class="gm-pct" id="gm_opP_pct">—</div>
@@ -819,6 +827,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_opS_fte"   value="3"      min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opS_weeks" value="32"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opS_cost"  value="192000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_opS_discamt">—</div>
       <div class="gm-val" id="gm_opS_val">—</div>
       <div class="gm-disc-impact" id="gm_opS_disc">—</div>
       <div class="gm-pct" id="gm_opS_pct">—</div>
@@ -828,6 +837,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_opT_fte"   value="3"      min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opT_weeks" value="48"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_opT_cost"  value="384000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_opT_discamt">—</div>
       <div class="gm-val" id="gm_opT_val">—</div>
       <div class="gm-disc-impact" id="gm_opT_disc">—</div>
       <div class="gm-pct" id="gm_opT_pct">—</div>
@@ -841,6 +851,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_advE_fte"   value="3"    min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_advE_weeks" value="1"    min="0" step="0.5" oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_advE_cost"  value="4000" min="0" step="500"  oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_advE_discamt">—</div>
       <div class="gm-val" id="gm_advE_val">—</div>
       <div class="gm-disc-impact" id="gm_advE_disc">—</div>
       <div class="gm-pct" id="gm_advE_pct">—</div>
@@ -850,6 +861,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <input class="gm-input" type="number" id="gm_entE_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_entE_weeks" value="2"     min="0" step="0.5" oninput="updateGM()">
       <input class="gm-input" type="number" id="gm_entE_cost"  value="80000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-disc-dollar" id="gm_entE_discamt">—</div>
       <div class="gm-val" id="gm_entE_val">—</div>
       <div class="gm-disc-impact" id="gm_entE_disc">—</div>
       <div class="gm-pct" id="gm_entE_pct">—</div>
@@ -863,6 +875,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <span class="gm-col-label" style="text-align:center" id="gm_total_fte">—</span>
       <span class="gm-col-label" style="text-align:center">—</span>
       <span class="gm-layer-name" style="font-weight:600;font-family:var(--mono)" id="gm_total_cost">—</span>
+      <div class="gm-disc-dollar" id="gm_total_discamt">—</div>
       <div class="gm-val" id="gm_total_val">—</div>
       <div class="gm-disc-impact" id="gm_total_disc">—</div>
       <div class="gm-pct" id="gm_total_pct">—</div>
@@ -1304,15 +1317,12 @@ function calc(){
   const discRecurringAmt=discCadence==='recurring'&&discPct>0
     ? Math.round(discBaseRecurring*(discPct/100)):0;
 
-  // Store discount context for GM% calculation
-  // Track which field was last used — both fields get synced so we can't rely on both having values
-  const rawDiscPct = parseFloat($('discPct').value) || 0;
-  const rawDiscAmt = parseFloat($('discAmt').value) || 0;
-  // lastDiscMode tracks which field the user last typed in (set by onDiscPct/onDiscAmt)
+  // Store discount context for GM% calculation.
+  // Always use discAmt (the actual $ being discounted) as canonical — this is what
+  // flows through the quote regardless of whether user typed % or $. The GM panel
+  // then spreads this amount across targeted visible layers only.
   window._gmDiscCtx = {
-    pct: lastDiscMode === 'pct' ? rawDiscPct : 0,  // only set if user typed %
-    amt: lastDiscMode === 'amt' ? rawDiscAmt : 0,  // only set if user typed $
-    derivedPct: discPct,
+    discountAmt: discAmt,   // actual $ discount on this deal
     chkL0: $('dL0').checked,
     chkL1: $('dL1').checked,
     chkL2: $('dL2').checked,
@@ -1572,24 +1582,23 @@ function updateGM(){
   showRow('gmr_entE', rowVisible.entE);
 
   // ── Discount context ──
-  // Use raw user-input % directly so layer-targeted discounts apply correctly.
-  // _gmDiscCtx.pct = raw % typed (e.g. 10 = 10%), not derived from quote base.
-  const dCtx = window._gmDiscCtx || {pct:0, amt:0, anyChecked:false};
-  const hasDiscount = dCtx.pct > 0 || dCtx.amt > 0;
+  const dCtx = window._gmDiscCtx || {discountAmt:0, anyChecked:false};
+  const discountAmt = dCtx.discountAmt || 0;
+  const hasDiscount = discountAmt > 0;
 
-  // Fetch L1 price (needed both here and in effectivePrice)
+  // Fetch L1 price
   const l1FeeEl = $('l1FeeDisplay');
   const l1RawPrice = l1FeeEl ? parseInt(l1FeeEl.textContent.replace(/[^0-9]/g,''))||160000 : 160000;
 
-  // Raw prices per layer key — used for proportional $ discount
+  // Raw prices per layer key
   const LAYER_RAW = {
     l1:l1RawPrice, ucS:65000, ucG:165000, ucSc:250000,
     opP:240000, opS:480000, opT:720000, advE:30000, entE:75000
   };
 
-  // Which layers are targeted
+  // Is this layer targeted by the discount checkboxes?
   function isLayerTargeted(layerKey){
-    if(!dCtx.anyChecked) return true; // no checkboxes → applies to all
+    if(!dCtx.anyChecked) return true;
     const map = {
       l1:'chkL1', ucS:'chkL2', ucG:'chkL2', ucSc:'chkL2',
       opP:'chkL2', opS:'chkL2', opT:'chkL2', advE:'chkVAS', entE:'chkVAS'
@@ -1597,26 +1606,32 @@ function updateGM(){
     return !!dCtx[map[layerKey]];
   }
 
-  // Compute the sum of targeted AND visible layer prices (for $ → % conversion)
-  // Only spread discount across layers that are actually selected and targeted
+  // Sum of raw prices for targeted AND visible layers (the base the discount spreads across)
   function targetedBase(){
     return Object.keys(LAYER_RAW).reduce((s,k) => {
-      return (isLayerTargeted(k) && rowVisible[k]) ? s+LAYER_RAW[k] : s;
+      return (isLayerTargeted(k) && rowVisible[k]) ? s + LAYER_RAW[k] : s;
     }, 0);
   }
 
-  // Apply discount to get effective revenue for a layer
+  // Effective post-discount revenue for a layer.
+  // We always use $ amount mode: spread discountAmt proportionally across targeted visible layers.
   function effectivePrice(rawPrice, layerKey){
     if(!hasDiscount || !isLayerTargeted(layerKey) || !rowVisible[layerKey]) return rawPrice;
-    if(dCtx.pct > 0){
-      // % mode: apply raw input % directly to this layer's price
-      return rawPrice * (1 - dCtx.pct / 100);
-    } else {
-      // $ mode: spread discount proportionally across targeted visible layers
-      const base = targetedBase();
-      if(base <= 0) return rawPrice;
-      return rawPrice - (dCtx.amt * (rawPrice / base));
-    }
+    const base = targetedBase();
+    if(base <= 0) return rawPrice;
+    // Layer's share of the discount = discountAmt × (this layer's price / total targeted base)
+    const layerDiscount = discountAmt * (rawPrice / base);
+    return rawPrice - layerDiscount;
+  }
+
+  // ── Helper: render Discount $ cell ──
+  function renderDiscDollar(elId, rawPrice, effPrice){
+    const el=$(elId);
+    if(!el) return;
+    const discAmt = rawPrice - effPrice;
+    if(!hasDiscount || Math.abs(discAmt) < 0.5){ el.textContent='—'; el.className='gm-disc-dollar'; return; }
+    el.textContent = '−'+fmt(Math.round(discAmt));
+    el.className = 'gm-disc-dollar has-disc';
   }
 
   // ── Helper: render GM $ value cell ──
@@ -1656,6 +1671,7 @@ function updateGM(){
     // GM$ = Revenue - Cost (always show if there's a price, even if cost is 0)
     const gmDollars = effPrice > 0 ? effPrice - costVal : null;
     renderGMPct(r.pctId, calcGMPct(effPrice, costVal));
+    renderDiscDollar('gm_'+r.key+'_discamt', r.rawPrice, effPrice);
     renderGMVal('gm_'+r.key+'_val', gmDollars);
     renderDiscImpact('gm_'+r.key+'_disc', effPrice, r.rawPrice, costVal);
     // Accumulate totals only for visible rows
@@ -1685,6 +1701,18 @@ function updateGM(){
 
     renderGMPct('gm_total_pct', totalPct);
     renderGMVal('gm_total_val', totalGMDollars);
+    // Render total discount $
+    const totalDiscApplied = totalRawPrice - totalPrice;
+    const tdDiscEl = $('gm_total_discamt');
+    if(tdDiscEl){
+      if(hasDiscount && totalDiscApplied > 0.5){
+        tdDiscEl.textContent = '−'+fmt(Math.round(totalDiscApplied));
+        tdDiscEl.className = 'gm-disc-dollar has-disc';
+      } else {
+        tdDiscEl.textContent = '—';
+        tdDiscEl.className = 'gm-disc-dollar';
+      }
+    }
     // Render total disc impact
     const tdEl = $('gm_total_disc');
     if(tdEl){
@@ -1713,7 +1741,7 @@ function updateGM(){
 
 buildTierCards();
 initPkgCards();
-window._gmDiscCtx = {pct:0, amt:0, anyChecked:false, chkL0:false, chkL1:false, chkL2:false, chkL3:false, chkVAS:false};
+window._gmDiscCtx = {discountAmt:0, anyChecked:false, chkL0:false, chkL1:false, chkL2:false, chkL3:false, chkVAS:false};
 calc();
 updateGM();
 </script>
