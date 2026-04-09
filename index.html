@@ -121,7 +121,34 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .pc-unit{font-size:10px;color:var(--teal);font-family:var(--mono);margin-top:3px;font-weight:500}
 .pc-price{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--teal);white-space:nowrap}
 
-/* Opus squad rich cards */
+/* Discount section */
+.sp-red{background:#FDECEA;color:#C0392B}
+.disc-input-wrap{position:relative;display:flex;align-items:center}
+.disc-input{width:100%;font-family:var(--mono);font-size:13px;color:var(--tx1);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:8px 28px 8px 11px;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield}
+.disc-input::-webkit-outer-spin-button,.disc-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.disc-input:focus{outline:none;border-color:#C0392B;box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.disc-input-dollar{padding:8px 11px 8px 24px}
+.disc-suffix{position:absolute;right:10px;font-size:12px;font-weight:600;color:var(--tx3);pointer-events:none;font-family:var(--mono)}
+.disc-prefix{position:absolute;left:9px;font-size:12px;font-weight:600;color:var(--tx3);pointer-events:none;font-family:var(--mono)}
+
+/* Cadence toggle */
+.disc-toggle-group{display:flex;gap:6px}
+.disc-option{flex:1;padding:7px 10px;font-size:11px;font-weight:600;font-family:var(--font);border:1px solid var(--border-mid);border-radius:var(--r-sm);background:var(--card);color:var(--tx3);cursor:pointer;transition:all .15s;text-align:center}
+.disc-option:hover{border-color:#C0392B;color:#C0392B}
+.disc-option.active{background:#FDECEA;border-color:#C0392B;color:#C0392B}
+
+/* Layer checkboxes */
+.disc-layer-checks{display:flex;flex-direction:column;gap:6px}
+.disc-check{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r-sm);transition:background .15s}
+.disc-check:hover{background:var(--surface)}
+.disc-check input[type=checkbox]{width:14px;height:14px;accent-color:#C0392B;cursor:pointer;flex-shrink:0}
+.disc-check-pill{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.disc-check-label{font-size:12px;font-weight:500;color:var(--tx1)}
+.disc-check:has(input:checked){background:#FDECEA;border-color:rgba(192,57,43,.25)}
+
+/* Quote panel discount elements */
+.q-total-before{font-size:18px;font-family:var(--mono);color:rgba(255,255,255,.25);text-decoration:line-through;margin-bottom:2px}
+.q-disc-badge{display:inline-block;font-size:11px;font-weight:600;font-family:var(--mono);padding:3px 10px;border-radius:20px;background:rgba(192,57,43,.25);color:#FF9085;border:1px solid rgba(192,57,43,.3);margin-top:4px}
 .opus-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 .opus-detail{border-top:1px solid var(--border);padding-top:10px}
 .pc.active .opus-detail{border-top-color:rgba(13,140,124,.2)}
@@ -235,6 +262,9 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
 .bk-sub-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.7)}
 .bk-sub-val{font-size:11px;font-weight:600;font-family:var(--mono);color:rgba(255,255,255,.7)}
 .bk-grand{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid rgba(255,255,255,.15);margin-top:6px}
+.bk-disc-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-top:1px solid rgba(192,57,43,.2);margin-top:4px}
+.bk-disc-label{font-size:11px;font-weight:600;color:#FF9085}
+.bk-disc-val{font-size:12px;font-weight:600;font-family:var(--mono);color:#FF9085}
 .bk-grand-label{font-size:12px;font-weight:700;color:#fff}
 .bk-grand-val{font-size:14px;font-weight:700;font-family:var(--mono);color:#fff}
 .bk-yr-note{font-size:10px;color:rgba(255,255,255,.2);line-height:1.55;margin-top:10px;font-style:italic}
@@ -287,6 +317,12 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
   <a class="nav-item" onclick="scrollTo('sV')">
     <span class="nav-badge nb-purple">VAS</span>
     <div><div class="nav-label">Value-Added</div><div class="nav-sub">Support & certs</div></div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Commercial</div>
+  <a class="nav-item" onclick="scrollTo('sDsc')">
+    <span class="nav-badge" style="background:rgba(192,57,43,.25);color:#FF9085">DSC</span>
+    <div><div class="nav-label">Discount</div><div class="nav-sub" id="navDiscSub">None applied</div></div>
   </a>
 </nav>
 
@@ -345,29 +381,39 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
       <div class="vp"><span class="vp-dot vd-blue"></span>Essentials training included from day one</div>
     </div>
     <div class="sec-body">
-      <div class="commit-banner">
-        <span class="commit-icon">&#128274;</span>
-        <span class="commit-txt">Priced on a <strong>3-year term</strong>. The $160,000 annual fee is locked for the life of the contract.</span>
+      <div class="tog sw-blue" id="toggleL1" onclick="toggleL1()">
+        <div class="tog-left">
+          <div class="tog-name">Platform Subscription</div>
+          <div class="tog-sub">$160,000 / yr · 3-year term · locked pricing</div>
+        </div>
+        <span class="tog-price blue-price">$160,000 / yr</span>
+        <div class="sw"></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="field">
-          <span class="flabel">Platform licence</span>
-          <span class="fstatic">$130,000 / yr</span>
+      <div id="l1Details" style="display:none;flex-direction:column;gap:.875rem">
+        <div class="commit-banner">
+          <span class="commit-icon">&#128274;</span>
+          <span class="commit-txt">Priced on a <strong>3-year term</strong>. The $160,000 annual fee is locked for the life of the contract.</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="field">
+            <span class="flabel">Platform licence</span>
+            <span class="fstatic">$130,000 / yr</span>
+          </div>
+          <div class="field">
+            <span class="flabel">Production environment</span>
+            <span class="fstatic">$30,000 / yr</span>
+          </div>
         </div>
         <div class="field">
-          <span class="flabel">Production environment</span>
-          <span class="fstatic">$30,000 / yr</span>
+          <label class="flabel">Additional environments</label>
+          <select id="addEnv" onchange="calc()">
+            <option value="0">None — production only</option>
+            <option value="1">+1 environment — $30,000 / yr</option>
+            <option value="2">+2 environments — $60,000 / yr</option>
+            <option value="3">+3 environments — $90,000 / yr</option>
+          </select>
+          <span class="note">Staging, testing, UAT, or disaster recovery. Each billed at $30K/yr alongside the platform term.</span>
         </div>
-      </div>
-      <div class="field">
-        <label class="flabel">Additional environments</label>
-        <select id="addEnv" onchange="calc()">
-          <option value="0">None — production only</option>
-          <option value="1">+1 environment — $30,000 / yr</option>
-          <option value="2">+2 environments — $60,000 / yr</option>
-          <option value="3">+3 environments — $90,000 / yr</option>
-        </select>
-        <span class="note">Staging, testing, UAT, or disaster recovery. Each billed at $30K/yr alongside the platform term.</span>
       </div>
     </div>
   </div>
@@ -514,6 +560,63 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
     </div>
   </div>
 
+  <!-- DISCOUNT -->
+  <div class="section collapsed" id="sDsc">
+    <div class="sec-head" onclick="toggleSec('sDsc')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-red">Discount</span>
+        <span class="sec-title">Apply Discount</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="sDscmeta">None applied</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="sec-body">
+
+      <!-- Amount inputs -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field">
+          <label class="flabel">Discount %</label>
+          <div class="disc-input-wrap">
+            <input type="number" id="discPct" class="disc-input" min="0" max="100" step="0.5" placeholder="0" oninput="onDiscPct()">
+            <span class="disc-suffix">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="flabel">Discount $</label>
+          <div class="disc-input-wrap">
+            <span class="disc-prefix">$</span>
+            <input type="number" id="discAmt" class="disc-input disc-input-dollar" min="0" step="1000" placeholder="0" oninput="onDiscAmt()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Cadence -->
+      <div class="field">
+        <label class="flabel">Discount cadence</label>
+        <div class="disc-toggle-group" id="discCadenceGroup">
+          <button class="disc-option active" id="cadOncBtn" onclick="setCadence('once')">One-time (Year 1 only)</button>
+          <button class="disc-option" id="cadRecBtn" onclick="setCadence('recurring')">Recurring (all 3 years)</button>
+        </div>
+      </div>
+
+      <!-- Layer targeting -->
+      <div class="field">
+        <label class="flabel">Apply discount to</label>
+        <div class="disc-layer-checks">
+          <label class="disc-check"><input type="checkbox" id="dL0" onchange="calc()"><span class="disc-check-pill" style="background:var(--slate-ghost);color:var(--slate)">L0</span><span class="disc-check-label">Value Sprint</span></label>
+          <label class="disc-check"><input type="checkbox" id="dL1" onchange="calc()"><span class="disc-check-pill" style="background:var(--blue-ghost);color:var(--blue)">L1</span><span class="disc-check-label">Platform</span></label>
+          <label class="disc-check"><input type="checkbox" id="dL2" onchange="calc()"><span class="disc-check-pill" style="background:var(--teal-ghost);color:var(--teal)">L2</span><span class="disc-check-label">Implementation</span></label>
+          <label class="disc-check"><input type="checkbox" id="dL3" onchange="calc()"><span class="disc-check-pill" style="background:var(--amber-ghost);color:var(--amber)">L3</span><span class="disc-check-label">Execution</span></label>
+          <label class="disc-check"><input type="checkbox" id="dVAS" onchange="calc()"><span class="disc-check-pill" style="background:var(--purple-ghost);color:var(--purple)">VAS</span><span class="disc-check-label">Add-ons</span></label>
+        </div>
+        <span class="note" style="margin-top:4px">If no layers are checked, the discount applies to the full quote.</span>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- /config -->
 
 <!-- ── QUOTE PANEL ── -->
@@ -531,7 +634,7 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
         <div class="q-layer-left"><span class="q-layer-pill qlp-slate">L0</span><span class="q-layer-name">Value Sprint</span></div>
         <span class="q-layer-val" id="ql0v">—</span>
       </div>
-      <div class="q-layer-row" id="ql1">
+      <div class="q-layer-row" id="ql1" style="display:none">
         <div class="q-layer-left"><span class="q-layer-pill qlp-blue">L1</span><span class="q-layer-name">Platform</span></div>
         <span class="q-layer-val" id="ql1v">$160,000</span>
       </div>
@@ -553,7 +656,9 @@ select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,
   <!-- Hero total -->
   <div class="q-hero">
     <div class="q-yr-label">Year 1 total</div>
+    <div class="q-total-before" id="qTotalBefore" style="display:none"></div>
     <div class="q-total" id="qTotal">$160,000</div>
+    <div class="q-disc-badge" id="qDiscBadge" style="display:none"></div>
     <div class="q-monthly" id="qMonthly">$13,333 / month</div>
   </div>
 
@@ -653,9 +758,10 @@ const OPUS_PKGS=[
 ];
 
 let selTier=null,selUC=null,selOpus=null,certImplQty=1;
-let l0=false;
+let l0=false, l1=false;
 let vas={support:false,enablAdv:false,enablEnt:false,certImpl:false,certPartner:false};
 let bkTab='annual';
+let discCadence='once'; // 'once' | 'recurring'
 
 const $=id=>document.getElementById(id);
 function fmt(n){if(n===null||n===undefined)return'—';if(n===0)return'$0';return'$'+Math.round(n).toLocaleString('en-US');}
@@ -664,9 +770,8 @@ function fvol(n){if(n>=1000000)return(n/1000000).toFixed(n%1000000===0?0:1)+'M';
 function toggleSec(id){
   const s=$(id);
   s.classList.toggle('collapsed');
-  // update nav active
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const map={s0:0,s1:1,s2:2,s3:3,sV:4};
+  const map={s0:0,s1:1,s2:2,s3:3,sV:4,sDsc:5};
   if(map[id]!==undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
 }
 
@@ -674,7 +779,7 @@ function scrollTo(id){
   $(id).scrollIntoView({behavior:'smooth',block:'start'});
   if($(id).classList.contains('collapsed')) toggleSec(id);
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const map={s0:0,s1:1,s2:2,s3:3,sV:4};
+  const map={s0:0,s1:1,s2:2,s3:3,sV:4,sDsc:5};
   if(map[id]!==undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
 }
 
@@ -685,7 +790,10 @@ function buildTierCards(){
     const d=document.createElement('div');
     d.className='tc'+(selTier===i?' active':'');
     d.innerHTML=`<div class="tc-name">${t.name}</div><div class="tc-vol">${fvol(t.vol)}</div><div class="tc-rate">$${t.rate.toFixed(2)}/txn</div><div class="tc-total">${fmt(total)}/yr</div>`;
-    d.onclick=()=>{selTier=i;buildTierCards();calc();};
+    d.onclick=()=>{
+      selTier=(selTier===i)?null:i; // toggle: click active to deselect
+      buildTierCards();calc();
+    };
     w.appendChild(d);
   });
 }
@@ -730,10 +838,30 @@ function buildPkgCards(wrapId,pkgs,sel,cb,showUnit){
 
 let ucCb,opusCb;
 function initPkgCards(){
-  ucCb=(i)=>{selUC=i;buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);calc();};
-  opusCb=(i)=>{selOpus=i;buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);calc();};
+  ucCb=(i)=>{
+    selUC=(selUC===i)?null:i; // toggle to deselect
+    buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);calc();
+  };
+  opusCb=(i)=>{
+    selOpus=(selOpus===i)?null:i; // toggle to deselect
+    buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);calc();
+  };
   buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);
   buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);
+}
+
+function toggleL1(){
+  l1=!l1;
+  $('toggleL1').classList.toggle('on',l1);
+  $('l1Details').style.display=l1?'flex':'none';
+  calc();
+}
+
+function setCadence(c){
+  discCadence=c;
+  $('cadOncBtn').classList.toggle('active',c==='once');
+  $('cadRecBtn').classList.toggle('active',c==='recurring');
+  calc();
 }
 
 function toggleL0(){
@@ -772,11 +900,59 @@ function switchTab(t){
   calc();
 }
 
+function onDiscPct(){
+  const pct=parseFloat($('discPct').value)||0;
+  // Will be resolved in calc — sync $ field after we know the total
+  calc();
+}
+
+function onDiscAmt(){
+  const amt=parseFloat($('discAmt').value)||0;
+  // Will be resolved in calc — sync % field after we know the total
+  calc();
+}
+
+function getDiscountBase(l0A,l1A,l2A,l3A,vasA){
+  // Which layers are targeted (if none checked → apply to all)
+  const chkL0=$('dL0').checked, chkL1=$('dL1').checked, chkL2=$('dL2').checked;
+  const chkL3=$('dL3').checked, chkVAS=$('dVAS').checked;
+  const anyChecked=chkL0||chkL1||chkL2||chkL3||chkVAS;
+  // The base amount to which % applies
+  const base=anyChecked
+    ? (chkL0?l0A:0)+(chkL1?l1A:0)+(chkL2?l2A:0)+(chkL3?l3A:0)+(chkVAS?vasA:0)
+    : l0A+l1A+l2A+l3A+vasA;
+  return base;
+}
+
+function getDiscount(base){
+  const pctRaw=parseFloat($('discPct').value);
+  const amtRaw=parseFloat($('discAmt').value);
+  const hasPct=!isNaN(pctRaw)&&pctRaw>0;
+  const hasAmt=!isNaN(amtRaw)&&amtRaw>0;
+  if(!hasPct&&!hasAmt) return{pct:0,amt:0};
+  if(hasAmt&&document.activeElement===$('discAmt')){
+    const amt=Math.min(amtRaw,base);
+    const pct=base>0?Math.round((amt/base)*1000)/10:0;
+    return{pct,amt};
+  }
+  if(hasPct){
+    const pct=Math.min(pctRaw,100);
+    const amt=Math.round(base*(pct/100));
+    return{pct,amt};
+  }
+  if(hasAmt){
+    const amt=Math.min(amtRaw,base);
+    const pct=base>0?Math.round((amt/base)*1000)/10:0;
+    return{pct,amt};
+  }
+  return{pct:0,amt:0};
+}
+
 function calc(){
-  const addEnv=parseInt($('addEnv').value);
+  const addEnv=l1?parseInt($('addEnv').value):0;
   const l2model=$('l2model').value;
 
-  const l1Annual=160000+(addEnv*30000);
+  const l1Annual=l1?(160000+(addEnv*30000)):0;
   const l0Amt=l0?35000:0;
 
   let l2Total=0,l2Label='';
@@ -795,16 +971,40 @@ function calc(){
   const vasRecurring=supportAmt;
   const vasAnnual=vasRecurring+vasOneTime;
 
+  // Gross year totals before discount
   const recurAnnual=l1Annual+l3Annual+vasRecurring;
-  const yr1=recurAnnual+l0Amt+l2Total+vasOneTime;
-  const yr2=recurAnnual;
-  const yr3=recurAnnual;
+  const yr1Gross=recurAnnual+l0Amt+l2Total+vasOneTime;
+  const yr2Gross=recurAnnual;
+  const yr3Gross=recurAnnual;
+
+  // Discount base — which layers are targeted
+  const discBaseYr1=getDiscountBase(l0Amt,l1Annual,l2Total,l3Annual,vasAnnual);
+  // For recurring: only apply to recurring-capable layers (L1, L3, recurring VAS)
+  const discBaseRecurring=getDiscountBase(0,l1Annual,0,l3Annual,vasRecurring);
+  const disc=getDiscount(discBaseYr1);
+  const discAmt=disc.amt;
+  const discPct=disc.pct;
+
+  // Sync non-active field
+  if(document.activeElement===$('discAmt')){
+    $('discPct').value=discPct>0?discPct:'';
+  } else {
+    $('discAmt').value=discAmt>0?discAmt:'';
+  }
+
+  // Annual recurring discount (for yr2, yr3) — only if cadence is recurring
+  const discRecurringAmt=discCadence==='recurring'&&discPct>0
+    ? Math.round(discBaseRecurring*(discPct/100)):0;
+
+  const yr1=yr1Gross-discAmt;
+  const yr2=yr2Gross-discRecurringAmt;
+  const yr3=yr3Gross-discRecurringAmt;
   const total3=yr1+yr2+yr3;
   const avg3=Math.round(total3/3);
 
   // ── Nav section metas
   $('s0meta').textContent=l0?'$35,000':'Not included';
-  $('s1meta').textContent=fmt(l1Annual)+' / yr';
+  $('s1meta').textContent=l1?(fmt(l1Annual)+' / yr'):'Not selected';
   const l2meta=l2model==='self'?'Self-serve':(l2Total>0?fmt(l2Total):'Select package');
   $('s2meta').textContent=l2meta;
   $('s3meta').textContent=t?`${fvol(t.vol)} · ${fmt(l3Annual)}/yr`:'No tier selected';
@@ -814,6 +1014,7 @@ function calc(){
   // ── Quote header layer rows
   $('ql0').style.display=l0?'flex':'none';
   $('ql0v').textContent=fmt(l0Amt);
+  $('ql1').style.display=l1?'flex':'none';
   $('ql1v').textContent=fmt(l1Annual);
   $('ql2').style.display=l2Total>0?'flex':'none';
   $('ql2n').textContent=l2Label||'Implementation';
@@ -836,6 +1037,18 @@ function calc(){
 
   // ── Support tag
   $('supportTag').textContent=vas.support?fmt(supportAmt)+' / yr':'20% of L1 + L3';
+
+  // Discount UI
+  const hasDisc=discAmt>0;
+  const cadenceLabel=discCadence==='recurring'?' · recurring':'· Year 1';
+  $('sDscmeta').textContent=hasDisc?`−${fmt(discAmt)} (${discPct}%) ${cadenceLabel}`:'None applied';
+  const navDiscSub=$('navDiscSub');
+  if(navDiscSub) navDiscSub.textContent=hasDisc?`−${fmt(discAmt)} (${discPct}%)`:'None applied';
+  $('qTotalBefore').style.display=hasDisc?'block':'none';
+  $('qTotalBefore').textContent=hasDisc?fmt(yr1Gross):'';
+  $('qDiscBadge').style.display=hasDisc?'inline-block':'none';
+  const recLabel=discCadence==='recurring'&&discRecurringAmt>0?` · −${fmt(discRecurringAmt)}/yr recurring`:'';
+  $('qDiscBadge').textContent=hasDisc?`−${fmt(discAmt)} · ${discPct}%${recLabel}`:'';
 
   // ── Rate bar
   if(t){
@@ -870,11 +1083,13 @@ function calc(){
     rows.push({type:'sub',label:'Subtotal',val:fmt(l0Amt),val3:fmt(l0Amt)});
   }
 
-  rows.push({type:'grp',label:'Layer 1 — Platform · 3-Year Term'});
-  rows.push({label:'Platform licence',detail:'Fixed · ×3 years',val:fmt(130000),val3:fmt(130000*3)});
-  rows.push({label:'Production environment',detail:'Bundled · ×3 years',val:fmt(30000),val3:fmt(30000*3)});
-  if(addEnv>0) rows.push({label:`Additional environments ×${addEnv}`,detail:`$${(30000*addEnv).toLocaleString()}/yr · ×3`,val:fmt(addEnv*30000),val3:fmt(addEnv*30000*3)});
-  rows.push({type:'sub',label:'Subtotal',val:fmt(l1Annual),val3:fmt(l1Annual*3)});
+  if(l1){
+    rows.push({type:'grp',label:'Layer 1 — Platform · 3-Year Term'});
+    rows.push({label:'Platform licence',detail:'Fixed · ×3 years',val:fmt(130000),val3:fmt(130000*3)});
+    rows.push({label:'Production environment',detail:'Bundled · ×3 years',val:fmt(30000),val3:fmt(30000*3)});
+    if(addEnv>0) rows.push({label:`Additional environments ×${addEnv}`,detail:`$${(30000*addEnv).toLocaleString()}/yr · ×3`,val:fmt(addEnv*30000),val3:fmt(addEnv*30000*3)});
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l1Annual),val3:fmt(l1Annual*3)});
+  }
 
   if(l2Total>0){
     rows.push({type:'grp',label:'Layer 2 — Implementation · Year 1'});
@@ -902,10 +1117,15 @@ function calc(){
 
   if(is3){
     rows.push({type:'grp',label:'Year-by-Year'});
-    const yr1Parts=[l0Amt>0?'Value Sprint':null,l2Total>0?'Layer 2':null,vasOneTime>0?'one-time add-ons':null].filter(Boolean).join(' + ');
-    rows.push({label:'Year 1',detail:yr1Parts?`Recurring + ${yr1Parts}`:'Recurring only',val:fmt(yr1),val3:''});
-    rows.push({label:'Year 2',detail:'Recurring only',val:fmt(yr2),val3:''});
-    rows.push({label:'Year 3',detail:'Recurring only',val:fmt(yr3),val3:''});
+    const yr1Parts=[l0Amt>0?'Value Sprint':null,l2Total>0?'Layer 2':null,vasOneTime>0?'one-time add-ons':null,hasDisc?`−${fmt(discAmt)} discount`:null].filter(Boolean).join(' + ');
+    rows.push({label:'Year 1',detail:yr1Parts||'Recurring only',val:fmt(yr1),val3:''});
+    rows.push({label:'Year 2',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr2),val3:''});
+    rows.push({label:'Year 3',detail:discRecurringAmt>0?`Recurring − ${fmt(discRecurringAmt)} discount`:'Recurring only',val:fmt(yr3),val3:''});
+  }
+
+  if(hasDisc){
+    const discDetail=discCadence==='recurring'?`${discPct}% · recurring all 3 years`:`${discPct}% · Year 1 only`;
+    rows.push({type:'disc',label:`Discount — ${discDetail}`,val:`−${fmt(discAmt)}`,val3:`−${fmt(discAmt+(discRecurringAmt*2))}`});
   }
 
   const grandLabel=is3?'Total Contract Value — 3 Years':'Year 1 Total';
@@ -916,17 +1136,13 @@ function calc(){
   $('qBkBody').innerHTML=rows.map(r=>{
     if(r.type==='grp') return `<div class="bk-grp">${r.label}</div>`;
     if(r.type==='sub') return `<div class="bk-sub"><span class="bk-sub-label">${r.label}</span><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-sub-val">${r.val3}</span>`:`<span class="bk-sub-val">${r.val}</span>`}</div></div>`;
+    if(r.type==='disc') return `<div class="bk-disc-row"><span class="bk-disc-label">${r.label}</span><span class="bk-disc-val">${r.val}</span></div>`;
     if(r.type==='grand') return `<div class="bk-grand"><span class="bk-grand-label">${r.label}</span><span class="bk-grand-val">${r.val}</span></div>${hasOneTime?'<div class="bk-yr-note">Value Sprint, Layer 2, enablement programmes, and certifications are one-time investments in Year 1. Layer 1, Layer 3, and Premium Support recur annually.</div>':''}`;
     return `<div class="bk-row"><div><div class="bk-row-label">${r.label}</div><div class="bk-row-detail">${r.detail||''}</div></div><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-row-val">${r.val3||''}</span>`:`<span class="bk-row-val">${r.val}</span>`}</div></div>`;
   }).join('');
 }
 
 buildTierCards();
-initPkgCards();
-// Default Layer 2: Use case packages, Growth selected
-document.getElementById('l2model').value='uc';
-selUC=1;
-toggleL2();
 initPkgCards();
 calc();
 </script>
