@@ -160,6 +160,28 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
 .pc-desc{font-size:10px;color:var(--tx3);margin-top:1px}
 .pc-unit{font-size:10px;color:#387BF0;font-family:var(--mono);margin-top:3px;font-weight:500}
 .pc-price{font-size:13px;font-weight:600;font-family:var(--mono);color:#387BF0;white-space:nowrap}
+.pc-duration{font-size:10px;color:#57D873;font-family:var(--mono);margin-top:3px;font-weight:500}
+
+/* ── GM% COST PANEL ──────────────────── */
+.gm-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:1rem;margin-top:1rem;overflow:hidden}
+.gm-panel-head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.25rem;cursor:pointer;user-select:none;border-bottom:0px solid var(--border);background:var(--extra-light-grey)}
+.gm-panel-title{font-size:12pt;font-weight:500;font-family:var(--font-heading);color:var(--black);display:flex;align-items:center;gap:8px}
+.gm-badge{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;padding:2px 8px;border-radius:20px;background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5}
+.gm-panel-body{padding:.875rem 1.25rem;display:flex;flex-direction:column;gap:.5rem}
+.gm-row{display:grid;grid-template-columns:160px 80px 100px 120px 72px;gap:8px;align-items:center}
+.gm-row-head{display:grid;grid-template-columns:160px 80px 100px 120px 72px;gap:8px;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.gm-col-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mid-grey);font-family:var(--font)}
+.gm-layer-name{font-size:11pt;font-weight:500;font-family:var(--font);color:var(--dark-grey)}
+.gm-input{width:100%;font-family:var(--mono);font-size:11pt;color:var(--black);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:5px 8px;transition:border-color .15s;-moz-appearance:textfield}
+.gm-input::-webkit-outer-spin-button,.gm-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.gm-input:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 2px rgba(56,123,240,.1)}
+.gm-pct{font-size:12pt;font-weight:600;font-family:var(--mono);text-align:center;padding:5px 4px;border-radius:var(--r-sm);white-space:nowrap}
+.gm-pct.good{background:#EDFBF1;color:#166534}
+.gm-pct.warn{background:#FFFBEB;color:#854D0E}
+.gm-pct.bad {background:#FEF2F2;color:#DC2626}
+.gm-divider{height:1px;background:var(--border);margin:4px 0}
+.gm-note{font-size:10pt;color:var(--mid-grey);font-style:italic;font-family:var(--font)}
+#gmr_total{background:var(--extra-light-grey);border-radius:var(--r-sm);padding:6px 8px;margin-top:2px}
 
 /* Discount section */
 .sp-red{background:#FEF2F2;color:#DC2626}
@@ -614,7 +636,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <div class="tog" id="toggleEnablAdv" onclick="toggleVAS('enablAdv')">
         <div class="tog-left">
           <div class="tog-name">Advanced Enablement</div>
-          <div class="tog-sub">Hands-on workshops, implementation playbooks &amp; reusable accelerators</div>
+          <div class="tog-sub">Hands-on workshops, implementation playbooks &amp; reusable accelerators · <span style="color:#57D873;font-family:var(--mono);font-size:10px">Typical duration: 1 week</span></div>
         </div>
         <span class="tog-price">$30,000 one-time</span>
         <div class="sw"></div>
@@ -622,7 +644,7 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       <div class="tog" id="toggleEnablEnt" onclick="toggleVAS('enablEnt')">
         <div class="tog-left">
           <div class="tog-name">Enterprise Academy</div>
-          <div class="tog-sub">Role-based learning paths, cohort programs &amp; full LMS access</div>
+          <div class="tog-sub">Role-based learning paths, cohort programs &amp; full LMS access · <span style="color:#57D873;font-family:var(--mono);font-size:10px">Typical duration: 2 weeks</span></div>
         </div>
         <span class="tog-price">$75,000 one-time</span>
         <div class="sw"></div>
@@ -709,6 +731,119 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
       </div>
 
     </div>
+  </div>
+
+  <!-- ── GM% COST & MARGIN PANEL ── -->
+  <div class="gm-panel" id="gmPanel">
+  <div class="gm-panel-head" onclick="toggleGM()">
+    <div class="gm-panel-title">
+      &#128200; Gross Margin
+      <span class="gm-badge">Internal — do not share with client</span>
+    </div>
+    <svg class="sec-chevron" id="gmChevron" style="transform:rotate(-90deg)" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="gm-panel-body" id="gmBody" style="display:none;flex-direction:column">
+
+    <!-- Header row -->
+    <div class="gm-row-head">
+      <span class="gm-col-label">Layer / Item</span>
+      <span class="gm-col-label">FTE</span>
+      <span class="gm-col-label">Effort (wks)</span>
+      <span class="gm-col-label">Cost (USD)</span>
+      <span class="gm-col-label">GM%</span>
+    </div>
+
+    <!-- L1 Platform -->
+    <div class="gm-row" id="gmr_l1">
+      <span class="gm-layer-name" style="color:#387BF0;font-weight:600">L1 · Platform</span>
+      <input class="gm-input" type="number" id="gm_l1_fte"    value="3"     min="0" step="1"    oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_l1_weeks"  value=""      min="0" step="1"   placeholder="–" oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_l1_cost"   value="30000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_l1_pct">—</div>
+    </div>
+
+    <div class="gm-divider"></div>
+
+    <!-- L2 UC Packages -->
+    <div class="gm-row" id="gmr_ucS">
+      <span class="gm-layer-name">L2 · Starter</span>
+      <input class="gm-input" type="number" id="gm_ucS_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucS_weeks" value="5"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucS_cost"  value="36000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_ucS_pct">—</div>
+    </div>
+    <div class="gm-row" id="gmr_ucG">
+      <span class="gm-layer-name">L2 · Growth</span>
+      <input class="gm-input" type="number" id="gm_ucG_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucG_weeks" value="7"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucG_cost"  value="48000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_ucG_pct">—</div>
+    </div>
+    <div class="gm-row" id="gmr_ucSc">
+      <span class="gm-layer-name">L2 · Scale</span>
+      <input class="gm-input" type="number" id="gm_ucSc_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucSc_weeks" value="9"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_ucSc_cost"  value="60000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_ucSc_pct">—</div>
+    </div>
+
+    <div class="gm-divider"></div>
+
+    <!-- L2 Opus Squad -->
+    <div class="gm-row" id="gmr_opP">
+      <span class="gm-layer-name">L2 · Prove</span>
+      <input class="gm-input" type="number" id="gm_opP_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opP_weeks" value="16"    min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opP_cost"  value="96000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_opP_pct">—</div>
+    </div>
+    <div class="gm-row" id="gmr_opS">
+      <span class="gm-layer-name">L2 · Scale Squad</span>
+      <input class="gm-input" type="number" id="gm_opS_fte"   value="3"      min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opS_weeks" value="32"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opS_cost"  value="192000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_opS_pct">—</div>
+    </div>
+    <div class="gm-row" id="gmr_opT">
+      <span class="gm-layer-name">L2 · Transform</span>
+      <input class="gm-input" type="number" id="gm_opT_fte"   value="3"      min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opT_weeks" value="48"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_opT_cost"  value="384000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_opT_pct">—</div>
+    </div>
+
+    <div class="gm-divider"></div>
+
+    <!-- VAS -->
+    <div class="gm-row" id="gmr_advE">
+      <span class="gm-layer-name">VAS · Adv. Enablement</span>
+      <input class="gm-input" type="number" id="gm_advE_fte"   value="3"    min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_advE_weeks" value="1"    min="0" step="0.5" oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_advE_cost"  value="4000" min="0" step="500"  oninput="updateGM()">
+      <div class="gm-pct" id="gm_advE_pct">—</div>
+    </div>
+    <div class="gm-row" id="gmr_entE">
+      <span class="gm-layer-name">VAS · Enterprise Acad.</span>
+      <input class="gm-input" type="number" id="gm_entE_fte"   value="3"     min="0" step="1"   oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_entE_weeks" value="2"     min="0" step="0.5" oninput="updateGM()">
+      <input class="gm-input" type="number" id="gm_entE_cost"  value="80000" min="0" step="1000" oninput="updateGM()">
+      <div class="gm-pct" id="gm_entE_pct">—</div>
+    </div>
+
+    <div class="gm-divider"></div>
+
+    <!-- Total GM row -->
+    <div class="gm-row" id="gmr_total" style="display:none">
+      <span class="gm-layer-name" style="font-weight:600;color:var(--black)">Total (selected)</span>
+      <span class="gm-col-label" style="text-align:center" id="gm_total_fte">—</span>
+      <span class="gm-col-label" style="text-align:center">—</span>
+      <span class="gm-layer-name" style="font-weight:600;font-family:var(--mono)" id="gm_total_cost">—</span>
+      <div class="gm-pct" id="gm_total_pct">—</div>
+    </div>
+
+    <div class="gm-divider"></div>
+    <span class="gm-note">GM% = (Price − Cost) ÷ Price &nbsp;·&nbsp; Green ≥ 50% &nbsp;·&nbsp; Amber 25–50% &nbsp;·&nbsp; Red &lt; 25% &nbsp;·&nbsp; L3 tracked separately</span>
+  </div>
   </div>
 
 </div><!-- /config -->
@@ -817,34 +952,34 @@ select:focus{outline:none;border-color:#387BF0;box-shadow:0 0 0 3px rgba(56,123,
 
 <script>
 const TIERS=[
-  {name:"Entry",     vol:100000,  rate:4.00},
-  {name:"Growth",    vol:250000,  rate:2.50},
-  {name:"Scale",     vol:500000,  rate:2.00},
-  {name:"Enterprise",vol:1000000, rate:1.25},
-  {name:"Strategic", vol:2500000, rate:0.75},
+  {name:"Entry",     vol:100000,  rate:4.10},
+  {name:"Growth",    vol:250000,  rate:2.60},
+  {name:"Scale",     vol:500000,  rate:2.10},
+  {name:"Enterprise",vol:1000000, rate:1.35},
+  {name:"Strategic", vol:2500000, rate:0.85},
 ];
 const UC_PKGS=[
-  {name:"Starter", desc:"1 use case",  price:65000,  unit:"$65,000 / use case"},
-  {name:"Growth",  desc:"3 use cases", price:165000, unit:"$55,000 / use case"},
-  {name:"Scale",   desc:"5 use cases", price:250000, unit:"$50,000 / use case"},
+  {name:"Starter", desc:"1 use case",  price:65000,  unit:"$65,000 / use case", duration:"Typical project duration: 4–6 weeks",  cost:36000},
+  {name:"Growth",  desc:"3 use cases", price:165000, unit:"$55,000 / use case", duration:"Typical project duration: 6–8 weeks",  cost:48000},
+  {name:"Scale",   desc:"5 use cases", price:250000, unit:"$50,000 / use case", duration:"Typical project duration: 8–10 weeks", cost:60000},
 ];
 const OPUS_PKGS=[
   {
-    name:"Prove", desc:"4 months", price:240000,
+    name:"Prove", desc:"4 months", price:240000, cost:96000,
     includes:["Project Manager","AI Solution Consultant","AI Workflow Engineer","Delivery Governance","2 × Opus Academy Sessions"],
     outcomes:["6–8 workflows delivered","Foundational integrations established","Initial ROI realised"],
     uplift:null,
     prefix:null
   },
   {
-    name:"Scale", desc:"8 months", price:480000,
+    name:"Scale", desc:"8 months", price:480000, cost:192000,
     includes:["Project Coordinator","5 × Opus Academy Sessions"],
     outcomes:["12–16 workflows delivered","Cross-functional automation","Reusable integration ecosystem"],
     uplift:["Increased delivery velocity","Parallel workflows","Project reporting","Strong governance + adoption layer"],
     prefix:"Everything in Prove, plus:"
   },
   {
-    name:"Transform", desc:"12 months", price:720000,
+    name:"Transform", desc:"12 months", price:720000, cost:384000,
     includes:["Training Bootcamp","Advanced workflow patterns","Multi-system orchestration (5+ systems)","Quarterly Value Reviews","Named Senior AI Architect (reserved monthly hours)"],
     outcomes:["20+ workflows delivered","End-to-end process transformation","Measurable business impact at scale"],
     uplift:["Enterprise-grade orchestration","Strategic transformation","Embedded capability within client"],
@@ -915,7 +1050,8 @@ function buildPkgCards(wrapId,pkgs,sel,cb,showUnit){
     // Simple UC card
     if(showUnit){
       const unitHtml=p.unit?`<div class="pc-unit">${p.unit}</div>`:'';
-      d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div class="pc-name">${p.name}</div><div class="pc-desc">${p.desc}</div>${unitHtml}</div><div class="pc-price">${fmt(p.price)}</div></div>`;
+      const durHtml=p.duration?`<div class="pc-duration">&#128337; ${p.duration}</div>`:'';
+      d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div class="pc-name">${p.name}</div><div class="pc-desc">${p.desc}</div>${unitHtml}${durHtml}</div><div class="pc-price">${fmt(p.price)}</div></div>`;
     } else {
       // Rich Opus Squad card
       const prefixHtml=p.prefix?`<div class="opus-prefix">${p.prefix}</div>`:'<div class="opus-section-label">Includes:</div>';
@@ -1104,8 +1240,10 @@ function calc(){
   const l3Annual=t?Math.round(t.vol * t.rate * term.l3Multiplier):0;
 
   const supportAmt    =vas.support    ?Math.round((l1Annual+l3Annual)*0.20):0;
-  const enablAdvAmt   =vas.enablAdv   ?30000:0;
-  const enablEntAmt   =vas.enablEnt   ?75000:0;
+  const enablAdvAmt   =vas.enablAdv   ?30000:0;  // price to client
+  const enablAdvCost  =4000;
+  const enablEntAmt   =vas.enablEnt   ?75000:0;  // price to client
+  const enablEntCost  =80000;
   const certImplAmt   =vas.certImpl   ?15000*certImplQty:0;
   const certPartnerAmt=vas.certPartner?50000:0;
   const vasOneTime=enablAdvAmt+enablEntAmt+certImplAmt+certPartnerAmt;
@@ -1135,6 +1273,17 @@ function calc(){
   // Annual recurring discount — only if cadence is recurring
   const discRecurringAmt=discCadence==='recurring'&&discPct>0
     ? Math.round(discBaseRecurring*(discPct/100)):0;
+
+  // Store discount context for GM% calculation
+  window._gmDiscCtx = {
+    pct: discPct,
+    chkL0: $('dL0').checked,
+    chkL1: $('dL1').checked,
+    chkL2: $('dL2').checked,
+    chkL3: $('dL3').checked,
+    chkVAS: $('dVAS').checked,
+    anyChecked: $('dL0').checked||$('dL1').checked||$('dL2').checked||$('dL3').checked||$('dVAS').checked,
+  };
 
   const yr1=yr1Gross-discAmt;
   const yrRecur=yrRecurGross-discRecurringAmt; // value for years 2..N
@@ -1190,6 +1339,9 @@ function calc(){
   // ── Hero
   $('qTotal').textContent=fmt(yr1);
   $('qMonthly').textContent=fmt(Math.round(yr1/12))+' / month';
+
+  // Refresh GM% panel whenever quote recalculates (L1 price may have changed)
+  if(typeof updateGM==='function') updateGM();
 
   // ── Support tag
   $('supportTag').textContent=vas.support?fmt(supportAmt)+' / yr':'20% of L1 + L3';
@@ -1319,9 +1471,146 @@ function calc(){
   }).join('');
 }
 
+let gmOpen=false;
+function toggleGM(){
+  gmOpen=!gmOpen;
+  $('gmBody').style.display=gmOpen?'flex':'none';
+  $('gmChevron').style.transform=gmOpen?'':'rotate(-90deg)';
+}
+
+// ── GM% CALCULATION ──────────────────────────────────────────────
+// Map each GM row: [rowKey, price, costInputId, pctId]
+const GM_ROWS = [
+  // L1 uses dynamic price — handled separately in updateGM via ALL_ROWS merge
+  {key:'ucS',   price:65000,  costId:'gm_ucS_cost',  pctId:'gm_ucS_pct'},
+  {key:'ucG',   price:165000, costId:'gm_ucG_cost',  pctId:'gm_ucG_pct'},
+  {key:'ucSc',  price:250000, costId:'gm_ucSc_cost', pctId:'gm_ucSc_pct'},
+  {key:'opP',   price:240000, costId:'gm_opP_cost',  pctId:'gm_opP_pct'},
+  {key:'opS',   price:480000, costId:'gm_opS_cost',  pctId:'gm_opS_pct'},
+  {key:'opT',   price:720000, costId:'gm_opT_cost',  pctId:'gm_opT_pct'},
+  {key:'advE',  price:30000,  costId:'gm_advE_cost', pctId:'gm_advE_pct'},
+  {key:'entE',  price:75000,  costId:'gm_entE_cost', pctId:'gm_entE_pct'},
+];
+
+function calcGMPct(price, costVal){
+  if(!costVal||costVal<=0||price<=0) return null;
+  return (price - costVal) / price * 100;
+}
+
+function renderGMPct(elId, pct){
+  const el=$(elId);
+  if(!el) return;
+  if(pct===null){ el.textContent='—'; el.className='gm-pct'; return; }
+  el.textContent = pct.toFixed(1)+'%';
+  el.className = 'gm-pct ' + (pct>=50?'good': pct>=25?'warn':'bad');
+}
+
+function updateGM(){
+  // ── Determine which rows are active based on current selections ──
+  const l2model = $('l2model') ? $('l2model').value : 'self';
+
+  const rowVisible = {
+    l1:   l1,
+    ucS:  l1 && l2model==='uc' && selUC===0,
+    ucG:  l1 && l2model==='uc' && selUC===1,
+    ucSc: l1 && l2model==='uc' && selUC===2,
+    opP:  l1 && l2model==='opus' && selOpus===0,
+    opS:  l1 && l2model==='opus' && selOpus===1,
+    opT:  l1 && l2model==='opus' && selOpus===2,
+    advE: vas.enablAdv,
+    entE: vas.enablEnt,
+  };
+
+  // Show/hide each row
+  const showRow = (id, visible) => {
+    const el=$(id); if(el) el.style.display = visible ? 'grid' : 'none';
+  };
+  showRow('gmr_l1',   rowVisible.l1);
+  showRow('gmr_ucS',  rowVisible.ucS);
+  showRow('gmr_ucG',  rowVisible.ucG);
+  showRow('gmr_ucSc', rowVisible.ucSc);
+  showRow('gmr_opP',  rowVisible.opP);
+  showRow('gmr_opS',  rowVisible.opS);
+  showRow('gmr_opT',  rowVisible.opT);
+  showRow('gmr_advE', rowVisible.advE);
+  showRow('gmr_entE', rowVisible.entE);
+
+  // ── Discount context — which layers get a discount and by how much ──
+  const dCtx = window._gmDiscCtx || {pct:0, anyChecked:false};
+  const discPctVal = dCtx.pct || 0;
+
+  // Apply discount to a price: if no layers checked → discount applies to all
+  // If layers checked → only apply if this layer's checkbox is checked
+  function effectivePrice(rawPrice, layerKey){
+    if(discPctVal <= 0) return rawPrice;
+    // Map layer keys to their checkbox state
+    const layerDiscounted = {
+      l1:   dCtx.anyChecked ? dCtx.chkL1  : true,
+      ucS:  dCtx.anyChecked ? dCtx.chkL2  : true,
+      ucG:  dCtx.anyChecked ? dCtx.chkL2  : true,
+      ucSc: dCtx.anyChecked ? dCtx.chkL2  : true,
+      opP:  dCtx.anyChecked ? dCtx.chkL2  : true,
+      opS:  dCtx.anyChecked ? dCtx.chkL2  : true,
+      opT:  dCtx.anyChecked ? dCtx.chkL2  : true,
+      advE: dCtx.anyChecked ? dCtx.chkVAS : true,
+      entE: dCtx.anyChecked ? dCtx.chkVAS : true,
+    };
+    if(layerDiscounted[layerKey]){
+      return rawPrice * (1 - discPctVal/100);
+    }
+    return rawPrice;
+  }
+
+  // ── Calculate GM% for each row using effective (post-discount) price ──
+  const l1FeeEl = $('l1FeeDisplay');
+  const l1RawPrice = l1FeeEl ? parseInt(l1FeeEl.textContent.replace(/[^0-9]/g,''))||160000 : 160000;
+
+  const ALL_ROWS = [
+    {key:'l1',   rawPrice:l1RawPrice, costId:'gm_l1_cost',   pctId:'gm_l1_pct'},
+    ...GM_ROWS.map(r=>({...r, rawPrice:r.price}))
+  ];
+
+  let totalPrice = 0, totalCost = 0;
+
+  ALL_ROWS.forEach(r => {
+    const costVal = parseFloat($(r.costId).value)||0;
+    const effPrice = effectivePrice(r.rawPrice, r.key);
+    renderGMPct(r.pctId, calcGMPct(effPrice, costVal));
+    // Accumulate totals only for visible rows
+    if(rowVisible[r.key]) {
+      totalPrice += effPrice;
+      totalCost  += costVal;
+    }
+  });
+
+  // ── Total GM% row ──
+  const anyVisible = Object.values(rowVisible).some(Boolean);
+  const totalRow = $('gmr_total');
+  if(totalRow) totalRow.style.display = anyVisible ? 'grid' : 'none';
+
+  if(anyVisible){
+    const totalPct = calcGMPct(totalPrice, totalCost);
+    renderGMPct('gm_total_pct', totalPct);
+    $('gm_total_cost').textContent = fmt(totalCost);
+    // Sum FTE across visible rows
+    const fteIds = {
+      l1:'gm_l1_fte', ucS:'gm_ucS_fte', ucG:'gm_ucG_fte', ucSc:'gm_ucSc_fte',
+      opP:'gm_opP_fte', opS:'gm_opS_fte', opT:'gm_opT_fte',
+      advE:'gm_advE_fte', entE:'gm_entE_fte'
+    };
+    let totalFTE = 0;
+    Object.keys(rowVisible).forEach(k => {
+      if(rowVisible[k] && fteIds[k]) totalFTE += parseFloat($(fteIds[k]).value)||0;
+    });
+    $('gm_total_fte').textContent = totalFTE > 0 ? totalFTE : '—';
+  }
+}
+
 buildTierCards();
 initPkgCards();
+window._gmDiscCtx = {pct:0, anyChecked:false, chkL0:false, chkL1:false, chkL2:false, chkL3:false, chkVAS:false};
 calc();
+updateGM();
 </script>
 </body>
 </html>
