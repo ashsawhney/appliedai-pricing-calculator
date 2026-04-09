@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opus Pricing Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1F3A;--navy2:#162D52;
+  --blue:#2359CC;--blue-lt:#4A7FF5;--blue-ghost:#EBF1FF;
+  --teal:#0D8C7C;--teal-ghost:#E4F5F2;
+  --amber:#C47A15;--amber-ghost:#FEF4E3;
+  --purple:#6A48C9;--purple-ghost:#F0ECFD;
+  --slate:#3D5166;--slate-ghost:#EAF0F5;
+  --green:#1A7F4B;--green-ghost:#E4F5EC;
+  --surface:#F4F6FB;--card:#fff;
+  --border:#E2E8F2;--border-mid:#C8D3E5;
+  --tx1:#0B1F3A;--tx2:#4A5672;--tx3:#8A95AE;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--surface);color:var(--tx1);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── HEADER ─────────────────────────── */
+.hdr{height:52px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:200;flex-shrink:0}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--blue-lt)}
+.hdr-name{font-size:12px;font-weight:600;color:#fff;letter-spacing:.06em;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.chip{font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.05em;padding:3px 9px;border-radius:20px}
+.chip-green{background:rgba(26,127,75,.2);color:#6ee8a2;border:1px solid rgba(26,127,75,.3)}
+.chip-muted{color:rgba(255,255,255,.3);font-family:var(--mono);font-size:10px}
+
+/* ── MAIN GRID ───────────────────────── */
+.app{display:grid;grid-template-columns:220px 1fr 360px;flex:1;min-height:0;height:calc(100vh - 52px)}
+
+/* ── NAV RAIL ────────────────────────── */
+.nav{background:var(--navy2);padding:1.25rem 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;cursor:pointer;transition:background .15s;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.05)}
+.nav-item.active{background:rgba(255,255,255,.07);border-left-color:var(--blue-lt)}
+.nav-badge{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 7px;border-radius:20px;flex-shrink:0;text-transform:uppercase}
+.nb-slate {background:rgba(61,81,102,.35); color:#9BB5CC}
+.nb-blue  {background:rgba(35,89,204,.3);  color:#89AAEE}
+.nb-teal  {background:rgba(13,140,124,.3); color:#6ECFC5}
+.nb-amber {background:rgba(196,122,21,.3); color:#E5B46A}
+.nb-purple{background:rgba(106,72,201,.3); color:#B59EE8}
+.nav-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.75);line-height:1.2}
+.nav-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.nav-item.active .nav-label{color:#fff}
+.nav-item.active .nav-sub{color:rgba(255,255,255,.5)}
+.nav-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 1.25rem}
+.nav-section-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 1.25rem 4px}
+
+/* ── CONFIG PANEL ────────────────────── */
+.config{overflow-y:auto;padding:1.5rem}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:1rem;overflow:hidden;transition:box-shadow .2s}
+.section:focus-within{box-shadow:0 0 0 2px var(--blue-ghost),0 0 0 1px var(--border)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer;user-select:none}
+.sec-head-left{display:flex;align-items:center;gap:10px}
+.sec-pill{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;padding:3px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0}
+.sp-slate {background:var(--slate-ghost); color:var(--slate)}
+.sp-blue  {background:var(--blue-ghost);  color:var(--blue)}
+.sp-teal  {background:var(--teal-ghost);  color:var(--teal)}
+.sp-amber {background:var(--amber-ghost); color:var(--amber)}
+.sp-purple{background:var(--purple-ghost);color:var(--purple)}
+.sec-title{font-size:13px;font-weight:600;color:var(--tx1)}
+.sec-meta{font-size:11px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.sec-chevron{width:16px;height:16px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
+.section.collapsed .sec-chevron{transform:rotate(-90deg)}
+.sec-body{padding:0 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.875rem}
+.section.collapsed .sec-body{display:none}
+
+/* Descriptions */
+.sec-desc{font-size:12px;color:var(--tx2);line-height:1.6;padding:0 1.25rem .75rem;border-bottom:1px solid var(--border);margin-bottom:-.1rem}
+.section.collapsed .sec-desc{display:none}
+.vp-list{display:flex;flex-direction:column;gap:3px;padding:0 1.25rem .875rem;border-bottom:1px solid var(--border)}
+.section.collapsed .vp-list{display:none}
+.vp{display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:var(--tx2);line-height:1.45}
+.vp-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.vd-slate{background:var(--slate)} .vd-blue{background:var(--blue-lt)}
+.vd-teal{background:var(--teal)}   .vd-amber{background:var(--amber)}
+.vd-purple{background:var(--purple)}
+
+/* Fields */
+.field{display:flex;flex-direction:column;gap:5px}
+.flabel{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
+.fstatic{font-size:13px;font-weight:500;color:var(--tx1);font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px}
+select{width:100%;font-family:var(--font);font-size:13px;color:var(--tx1);background:var(--card);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:8px 30px 8px 11px;appearance:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A95AE' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,89,204,.1)}
+.note{font-size:11px;color:var(--tx3);line-height:1.55}
+
+/* Commit banner */
+.commit-banner{display:flex;align-items:center;gap:9px;background:var(--green-ghost);border:1px solid #A8D9BE;border-radius:var(--r-sm);padding:9px 11px}
+.commit-icon{font-size:14px;flex-shrink:0}
+.commit-txt{font-size:11.5px;color:var(--green);line-height:1.45}
+
+/* Tier grid */
+.tier-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tc{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:9px 8px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center}
+.tc:hover{border-color:var(--blue-lt);background:var(--blue-ghost)}
+.tc.active{border-color:var(--blue);background:var(--blue-ghost)}
+.tc-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:4px}
+.tc.active .tc-name{color:var(--blue)}
+.tc-vol{font-size:12px;font-weight:600;color:var(--tx1);font-family:var(--mono);margin-bottom:1px}
+.tc.active .tc-vol{color:var(--blue)}
+.tc-rate{font-size:10px;color:var(--tx2);font-family:var(--mono)}
+.tc-total{font-size:10px;color:var(--teal);font-family:var(--mono);font-weight:500;margin-top:3px}
+
+/* Pkg cards */
+.pkg-list{display:flex;flex-direction:column;gap:5px}
+.pc{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column}
+.pc:hover{border-color:var(--teal);background:var(--teal-ghost)}
+.pc.active{border-color:var(--teal);background:var(--teal-ghost)}
+.pc-name{font-size:12px;font-weight:600;color:var(--tx1)}
+.pc.active .pc-name{color:var(--teal)}
+.pc-desc{font-size:10px;color:var(--tx3);margin-top:1px}
+.pc-unit{font-size:10px;color:var(--teal);font-family:var(--mono);margin-top:3px;font-weight:500}
+.pc-price{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--teal);white-space:nowrap}
+
+/* Opus squad rich cards */
+.opus-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.opus-detail{border-top:1px solid var(--border);padding-top:10px}
+.pc.active .opus-detail{border-top-color:rgba(13,140,124,.2)}
+.opus-prefix{font-size:10.5px;font-weight:600;color:var(--teal);margin-bottom:5px}
+.pc.active .opus-prefix{color:var(--teal)}
+.opus-section-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.pc.active .opus-section-label{color:rgba(13,140,124,.7)}
+.opus-item{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:var(--tx2);line-height:1.45;padding:1px 0}
+.pc.active .opus-item{color:var(--tx1)}
+.opus-dot{width:4px;height:4px;border-radius:50%;background:var(--tx3);flex-shrink:0;margin-top:5px}
+.pc.active .opus-dot{background:var(--teal)}
+.opus-item-uplift .opus-dot.uplift-dot{background:var(--blue-lt)}
+.pc.active .opus-item-uplift .opus-dot.uplift-dot{background:var(--blue)}
+.opus-item-outcome .opus-dot.outcome-dot{background:var(--amber)}
+.pc.active .opus-item-outcome .opus-dot.outcome-dot{background:var(--amber)}
+
+/* Toggle rows */
+.tog{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--border-mid);border-radius:var(--r-sm);cursor:pointer;transition:background .15s}
+.tog:hover{background:var(--surface)}
+.tog-left{flex:1;min-width:0}
+.tog-name{font-size:12px;font-weight:500;color:var(--tx1)}
+.tog-sub{font-size:10.5px;color:var(--tx3);margin-top:1px}
+.tog-price{font-size:11px;font-weight:600;font-family:var(--mono);color:var(--purple);white-space:nowrap;flex-shrink:0}
+.tog-price.blue-price{color:var(--blue)}
+.sw{width:32px;height:18px;background:var(--border-mid);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0}
+.sw::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on .sw{background:var(--purple)}
+.tog.on .sw::after{left:17px}
+.tog.on.sw-blue .sw{background:var(--blue)}
+.qty-row{display:flex;align-items:center;gap:7px;margin-top:6px}
+.qb{width:20px;height:20px;border-radius:4px;border:1px solid var(--border-mid);background:var(--card);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--tx2);line-height:1}
+.qb:hover{background:var(--surface)}
+.qv{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--tx1);min-width:16px;text-align:center}
+.qty-label{font-size:10px;color:var(--tx3)}
+
+/* Sub-section label */
+.sub-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);padding-top:2px}
+
+/* ── QUOTE PANEL ─────────────────────── */
+.quote{background:var(--navy);overflow-y:auto;display:flex;flex-direction:column}
+.q-header{padding:1.25rem 1.25rem .875rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.q-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.q-title{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.q-commit-chip{font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:rgba(26,127,75,.2);color:#6ee8a2;border:1px solid rgba(26,127,75,.25)}
+
+/* Total hero */
+.q-hero{text-align:center;padding:1.25rem 1.25rem 1rem}
+.q-yr-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
+.q-total{font-size:38px;font-weight:300;font-family:var(--mono);color:#fff;line-height:1;letter-spacing:-.02em}
+.q-monthly{font-size:12px;color:rgba(255,255,255,.35);margin-top:5px;font-family:var(--mono)}
+
+/* 3-year bars */
+.q-3yr{padding:0 1.25rem 1rem}
+.q-3yr-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px}
+.yr-bars{display:flex;flex-direction:column;gap:8px}
+.yr-bar-row{display:flex;align-items:center;gap:10px}
+.yr-bar-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.5);width:40px;flex-shrink:0;font-family:var(--mono)}
+.yr-bar-track{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.yr-bar-fill{height:100%;background:var(--blue-lt);border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.yr-bar-val{font-size:11px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.65);width:72px;text-align:right;flex-shrink:0}
+.q-3yr-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+.q-3yr-total-label{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.q-3yr-total-val{font-size:16px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.75)}
+.q-3yr-avg{font-size:10px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:1px;text-align:right}
+
+/* Layer breakdown in quote */
+.q-layers{padding:0 1.25rem;display:flex;flex-direction:column;gap:3px;flex:1}
+.q-layer-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;transition:background .15s}
+.q-layer-row.has-val{background:rgba(255,255,255,.04)}
+.q-layer-row.grand{background:rgba(255,255,255,.08);margin-top:4px}
+.q-layer-left{display:flex;align-items:center;gap:8px}
+.q-layer-pill{font-size:8px;font-weight:700;font-family:var(--mono);letter-spacing:.07em;padding:2px 6px;border-radius:20px;text-transform:uppercase;flex-shrink:0}
+.qlp-slate {background:rgba(61,81,102,.5);  color:#9BB5CC}
+.qlp-blue  {background:rgba(35,89,204,.3);  color:#89AAEE}
+.qlp-teal  {background:rgba(13,140,124,.3); color:#6ECFC5}
+.qlp-amber {background:rgba(196,122,21,.3); color:#E5B46A}
+.qlp-purple{background:rgba(106,72,201,.3); color:#B59EE8}
+.qlp-grand {background:rgba(255,255,255,.1);color:#fff}
+.q-layer-name{font-size:11px;color:rgba(255,255,255,.6)}
+.q-layer-row.grand .q-layer-name{font-weight:600;color:#fff;font-size:12px}
+.q-layer-val{font-size:12px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.75)}
+.q-layer-row.grand .q-layer-val{font-size:14px;color:#fff;font-weight:600}
+.q-layer-empty{font-size:11px;color:rgba(255,255,255,.2);font-style:italic}
+
+/* Rate indicator */
+.q-rate{margin:0 1.25rem 1rem;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px}
+.q-rate-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.q-rate-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.q-rate-val{font-size:14px;font-family:var(--mono);font-weight:500;color:rgba(255,255,255,.8)}
+.q-rate-desc{font-size:10px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:-4px;margin-bottom:8px}
+.q-rate-track{height:3px;background:rgba(255,255,255,.08);border-radius:99px}
+.q-rate-fill{height:100%;background:linear-gradient(90deg,var(--blue-lt),var(--teal));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.q-rate-ticks{display:flex;justify-content:space-between;margin-top:5px}
+.q-rate-tick{font-size:8.5px;font-family:var(--mono);color:rgba(255,255,255,.2)}
+
+/* Breakdown accordion in quote */
+.q-breakdown{border-top:1px solid rgba(255,255,255,.07);margin-top:auto}
+.q-bk-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.07)}
+.q-bk-tab{flex:1;padding:9px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.3);cursor:pointer;transition:color .15s,background .15s;border:none;background:none;font-family:var(--font)}
+.q-bk-tab:hover{color:rgba(255,255,255,.6)}
+.q-bk-tab.active{color:#fff;background:rgba(255,255,255,.06)}
+.q-bk-body{padding:.75rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:0}
+.bk-grp{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:8px 0 4px}
+.bk-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.bk-row:last-of-type{border-bottom:none}
+.bk-row-label{font-size:11px;color:rgba(255,255,255,.55)}
+.bk-row-detail{font-size:9px;color:rgba(255,255,255,.25);margin-top:1px}
+.bk-row-val{font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.65);text-align:right;flex-shrink:0;margin-left:8px}
+.bk-row-val3{font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.45);text-align:right;flex-shrink:0;margin-left:8px}
+.bk-sub{display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid rgba(255,255,255,.08);margin-top:2px;margin-bottom:2px}
+.bk-sub-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.7)}
+.bk-sub-val{font-size:11px;font-weight:600;font-family:var(--mono);color:rgba(255,255,255,.7)}
+.bk-grand{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px solid rgba(255,255,255,.15);margin-top:6px}
+.bk-grand-label{font-size:12px;font-weight:700;color:#fff}
+.bk-grand-val{font-size:14px;font-weight:700;font-family:var(--mono);color:#fff}
+.bk-yr-note{font-size:10px;color:rgba(255,255,255,.2);line-height:1.55;margin-top:10px;font-style:italic}
+.bk-cols{display:flex;justify-content:space-between;gap:8px}
+.bk-col-head{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.25);text-align:right}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-dot"></div>
+    <span class="hdr-name">Opus · Pricing Calculator</span>
+  </div>
+  <div class="hdr-right">
+    <span class="chip chip-green">3-Year Term</span>
+    <span class="chip-muted">v2.0 · Internal</span>
+  </div>
+</header>
+
+<div class="app">
+
+<!-- ── NAV RAIL ── -->
+<nav class="nav">
+  <div class="nav-section-label">Engagement</div>
+  <a class="nav-item active" onclick="scrollTo('s0')">
+    <span class="nav-badge nb-slate">L0</span>
+    <div><div class="nav-label">Value Sprint</div><div class="nav-sub">$35K · one-time</div></div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Platform</div>
+  <a class="nav-item" onclick="scrollTo('s1')">
+    <span class="nav-badge nb-blue">L1</span>
+    <div><div class="nav-label">Subscription</div><div class="nav-sub">$160K / yr · 3yr</div></div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Delivery</div>
+  <a class="nav-item" onclick="scrollTo('s2')">
+    <span class="nav-badge nb-teal">L2</span>
+    <div><div class="nav-label">Implementation</div><div class="nav-sub">Variable · one-time</div></div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Execution</div>
+  <a class="nav-item" onclick="scrollTo('s3')">
+    <span class="nav-badge nb-amber">L3</span>
+    <div><div class="nav-label">Decision & Exec</div><div class="nav-sub">$0.75–$4.00 / txn</div></div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Add-ons</div>
+  <a class="nav-item" onclick="scrollTo('sV')">
+    <span class="nav-badge nb-purple">VAS</span>
+    <div><div class="nav-label">Value-Added</div><div class="nav-sub">Support & certs</div></div>
+  </a>
+</nav>
+
+<!-- ── CONFIG ── -->
+<div class="config" id="configPanel">
+
+  <!-- LAYER 0 -->
+  <div class="section collapsed" id="s0">
+    <div class="sec-head" onclick="toggleSec('s0')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-slate">Layer 0</span>
+        <span class="sec-title">Value Sprint</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="s0meta">Not included</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <p class="sec-desc">A 3–4 day on-site engagement that turns a real business problem into a working AI-powered workflow — built on the client's own data, with their team in the room. No slides, no POC theatre. A functioning prototype and validated results before we leave.</p>
+    <div class="vp-list">
+      <div class="vp"><span class="vp-dot vd-slate"></span>Built on real client data from day one — not sanitised samples or toy datasets</div>
+      <div class="vp"><span class="vp-dot vd-slate"></span>Working prototype in hand by end of sprint, not in a follow-up report</div>
+      <div class="vp"><span class="vp-dot vd-slate"></span>Quantified results and a validated business case the client owns</div>
+      <div class="vp"><span class="vp-dot vd-slate"></span>A costed, sequenced path to production agreed before the team departs</div>
+    </div>
+    <div class="sec-body">
+      <div class="tog" id="toggleL0" onclick="toggleL0()">
+        <div class="tog-left">
+          <div class="tog-name">Value Sprint</div>
+          <div class="tog-sub">3–4 days on-site · one-time · typically pre-platform</div>
+        </div>
+        <span class="tog-price" style="color:var(--slate)">$35,000</span>
+        <div class="sw" id="l0Switch"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 1 -->
+  <div class="section collapsed" id="s1">
+    <div class="sec-head" onclick="toggleSec('s1')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-blue">Layer 1</span>
+        <span class="sec-title">Platform Subscription</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="s1meta">$160,000 / yr</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <p class="sec-desc">Full platform access, fixed for three years. Unlimited process mining, workflow blueprint generation, and automation experimentation — no usage caps, no credit metering, no surprises at renewal.</p>
+    <div class="vp-list">
+      <div class="vp"><span class="vp-dot vd-blue"></span>Discover Tool and Build — fully unlocked, use as much as you need</div>
+      <div class="vp"><span class="vp-dot vd-blue"></span>Process mining, workflow blueprint generation, and automation configuration included</div>
+      <div class="vp"><span class="vp-dot vd-blue"></span>One production environment deployment bundled at no extra cost</div>
+      <div class="vp"><span class="vp-dot vd-blue"></span>Standard Business Hours support included from day one</div>
+      <div class="vp"><span class="vp-dot vd-blue"></span>Essentials training included from day one</div>
+    </div>
+    <div class="sec-body">
+      <div class="commit-banner">
+        <span class="commit-icon">&#128274;</span>
+        <span class="commit-txt">Priced on a <strong>3-year term</strong>. The $160,000 annual fee is locked for the life of the contract.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="field">
+          <span class="flabel">Platform licence</span>
+          <span class="fstatic">$130,000 / yr</span>
+        </div>
+        <div class="field">
+          <span class="flabel">Production environment</span>
+          <span class="fstatic">$30,000 / yr</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel">Additional environments</label>
+        <select id="addEnv" onchange="calc()">
+          <option value="0">None — production only</option>
+          <option value="1">+1 environment — $30,000 / yr</option>
+          <option value="2">+2 environments — $60,000 / yr</option>
+          <option value="3">+3 environments — $90,000 / yr</option>
+        </select>
+        <span class="note">Staging, testing, UAT, or disaster recovery. Each billed at $30K/yr alongside the platform term.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2 -->
+  <div class="section collapsed" id="s2">
+    <div class="sec-head" onclick="toggleSec('s2')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-teal">Layer 2</span>
+        <span class="sec-title">Activation &amp; Implementation</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="s2meta">Self-serve</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <p class="sec-desc">Getting workflow blueprints to live automated workflows. Clients can self-activate using the enablement included in Layer 1, or bring in the Solutions Delivery team for a structured, expert-led build.</p>
+    <div class="vp-list">
+      <div class="vp"><span class="vp-dot vd-teal"></span>Opus delivery squad works directly alongside the client's team</div>
+      <div class="vp"><span class="vp-dot vd-teal"></span>Full ownership of design, build, testing, and go-live — end to end</div>
+      <div class="vp"><span class="vp-dot vd-teal"></span>Scope by use case count or time-boxed engagement — client's choice</div>
+    </div>
+    <div class="sec-body">
+      <div class="field">
+        <label class="flabel">Delivery model</label>
+        <select id="l2model" onchange="toggleL2();calc()">
+          <option value="self">Self-serve — included in Layer 1</option>
+          <option value="uc">Use case packages</option>
+          <option value="opus">Opus Squad — duration-based</option>
+        </select>
+      </div>
+      <div id="l2ucWrap" style="display:none">
+        <div class="field">
+          <label class="flabel">Package</label>
+          <div class="pkg-list" id="ucCards"></div>
+        </div>
+      </div>
+      <div id="l2opusWrap" style="display:none">
+        <div class="field">
+          <label class="flabel">Squad duration</label>
+          <div class="pkg-list" id="opusCards"></div>
+        </div>
+      </div>
+      <span class="note">Layer 2 is a one-time delivery cost. It appears in Year 1 and does not recur.</span>
+    </div>
+  </div>
+
+  <!-- LAYER 3 -->
+  <div class="section collapsed" id="s3">
+    <div class="sec-head" onclick="toggleSec('s3')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-amber">Layer 3</span>
+        <span class="sec-title">Decision &amp; Execution</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="s3meta">No tier selected</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <p class="sec-desc">Usage-based pricing tied directly to production outcomes. Every decision made and action executed by the platform is counted. Commit to higher volumes and the per-transaction rate drops — the more you automate, the less each execution costs.</p>
+    <div class="vp-list">
+      <div class="vp"><span class="vp-dot vd-amber"></span>Pricing aligned to value — you pay for outcomes, not seats</div>
+      <div class="vp"><span class="vp-dot vd-amber"></span>Five volume tiers from 100K to 2.5M executions per year</div>
+      <div class="vp"><span class="vp-dot vd-amber"></span>Annual commitment with overage billed at the selected tier rate</div>
+    </div>
+    <div class="sec-body">
+      <div class="field">
+        <label class="flabel">Annual execution volume</label>
+        <div class="tier-grid" id="tierCards"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAS -->
+  <div class="section collapsed" id="sV">
+    <div class="sec-head" onclick="toggleSec('sV')">
+      <div class="sec-head-left">
+        <span class="sec-pill sp-purple">Add-ons</span>
+        <span class="sec-title">Value-Added Services</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sec-meta" id="sVmeta">None selected</span>
+        <svg class="sec-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <p class="sec-desc">Add-ons that sharpen the client's advantage — faster time to value, deeper team capability, and recognised expertise. All optional, all stackable.</p>
+    <div class="vp-list">
+      <div class="vp"><span class="vp-dot vd-purple"></span>Around-the-clock support with a guaranteed critical response time</div>
+      <div class="vp"><span class="vp-dot vd-purple"></span>Structured enablement programs that build lasting internal capability</div>
+      <div class="vp"><span class="vp-dot vd-purple"></span>Formal certification for individuals and firms operating on the platform</div>
+    </div>
+    <div class="sec-body">
+      <div class="sub-label">Support</div>
+      <div class="tog sw-blue" id="toggleSupport" onclick="toggleVAS('support')">
+        <div class="tog-left">
+          <div class="tog-name">Premium 24/7 Support</div>
+          <div class="tog-sub">Around-the-clock coverage · &lt;1hr critical SLA · dedicated escalation path</div>
+        </div>
+        <span class="tog-price blue-price" id="supportTag">20% of L1 + L3</span>
+        <div class="sw"></div>
+      </div>
+
+      <div class="sub-label">Enablement</div>
+      <div class="tog" id="toggleEnablAdv" onclick="toggleVAS('enablAdv')">
+        <div class="tog-left">
+          <div class="tog-name">Advanced Enablement</div>
+          <div class="tog-sub">Hands-on workshops, implementation playbooks &amp; reusable accelerators</div>
+        </div>
+        <span class="tog-price">$30,000 one-time</span>
+        <div class="sw"></div>
+      </div>
+      <div class="tog" id="toggleEnablEnt" onclick="toggleVAS('enablEnt')">
+        <div class="tog-left">
+          <div class="tog-name">Enterprise Academy</div>
+          <div class="tog-sub">Role-based learning paths, cohort programs &amp; full LMS access</div>
+        </div>
+        <span class="tog-price">$75,000 one-time</span>
+        <div class="sw"></div>
+      </div>
+
+      <div class="sub-label">Certification</div>
+      <div class="tog" id="toggleCertImpl" onclick="toggleVAS('certImpl')">
+        <div class="tog-left">
+          <div class="tog-name">Certified Opus Implementer</div>
+          <div class="tog-sub">Practitioner-level certification — per person, one-time</div>
+          <div class="qty-row" id="certImplQtyWrap" style="display:none" onclick="event.stopPropagation()">
+            <button class="qb" onclick="adjQty(-1)">−</button>
+            <span class="qv" id="certImplQtyVal">1</span>
+            <button class="qb" onclick="adjQty(1)">+</button>
+            <span class="qty-label">× $15,000 per person</span>
+          </div>
+        </div>
+        <span class="tog-price" id="certImplTag">$15,000 / person</span>
+        <div class="sw"></div>
+      </div>
+      <div class="tog" id="toggleCertPartner" onclick="toggleVAS('certPartner')">
+        <div class="tog-left">
+          <div class="tog-name">Certified Opus Partner</div>
+          <div class="tog-sub">Firm-level accreditation, partner badge &amp; directory listing</div>
+        </div>
+        <span class="tog-price">$50,000 one-time</span>
+        <div class="sw"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /config -->
+
+<!-- ── QUOTE PANEL ── -->
+<aside class="quote">
+
+  <div class="q-header">
+    <div class="q-header-top">
+      <span class="q-title">Live Quote</span>
+      <span class="q-commit-chip">3-Year Term</span>
+    </div>
+
+    <!-- Layer summary rows -->
+    <div class="q-layers" style="padding:0;gap:2px">
+      <div class="q-layer-row" id="ql0" style="display:none">
+        <div class="q-layer-left"><span class="q-layer-pill qlp-slate">L0</span><span class="q-layer-name">Value Sprint</span></div>
+        <span class="q-layer-val" id="ql0v">—</span>
+      </div>
+      <div class="q-layer-row" id="ql1">
+        <div class="q-layer-left"><span class="q-layer-pill qlp-blue">L1</span><span class="q-layer-name">Platform</span></div>
+        <span class="q-layer-val" id="ql1v">$160,000</span>
+      </div>
+      <div class="q-layer-row" id="ql2" style="display:none">
+        <div class="q-layer-left"><span class="q-layer-pill qlp-teal">L2</span><span class="q-layer-name" id="ql2n">Implementation</span></div>
+        <span class="q-layer-val" id="ql2v">—</span>
+      </div>
+      <div class="q-layer-row" id="ql3" style="display:none">
+        <div class="q-layer-left"><span class="q-layer-pill qlp-amber">L3</span><span class="q-layer-name" id="ql3n">Execution</span></div>
+        <span class="q-layer-val" id="ql3v">—</span>
+      </div>
+      <div class="q-layer-row" id="qlVAS" style="display:none">
+        <div class="q-layer-left"><span class="q-layer-pill qlp-purple">VAS</span><span class="q-layer-name">Add-ons</span></div>
+        <span class="q-layer-val" id="qlVASv">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero total -->
+  <div class="q-hero">
+    <div class="q-yr-label">Year 1 total</div>
+    <div class="q-total" id="qTotal">$160,000</div>
+    <div class="q-monthly" id="qMonthly">$13,333 / month</div>
+  </div>
+
+  <!-- Rate indicator -->
+  <div class="q-rate" id="qRateWrap">
+    <div class="q-rate-top">
+      <span class="q-rate-label">L3 Rate</span>
+      <span class="q-rate-val" id="qRate">—</span>
+    </div>
+    <div class="q-rate-desc" id="qRateDesc">Select a volume tier</div>
+    <div class="q-rate-track"><div class="q-rate-fill" id="qRateFill" style="width:0%"></div></div>
+    <div class="q-rate-ticks">
+      <span class="q-rate-tick">$4.00</span>
+      <span class="q-rate-tick">$2.50</span>
+      <span class="q-rate-tick">$2.00</span>
+      <span class="q-rate-tick">$1.25</span>
+      <span class="q-rate-tick">$0.75</span>
+    </div>
+  </div>
+
+  <!-- 3-year bars -->
+  <div class="q-3yr">
+    <div class="q-3yr-label">3-Year view</div>
+    <div class="yr-bars">
+      <div class="yr-bar-row">
+        <span class="yr-bar-name">Yr 1</span>
+        <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar1" style="width:100%"></div></div>
+        <span class="yr-bar-val" id="qYr1">$160,000</span>
+      </div>
+      <div class="yr-bar-row">
+        <span class="yr-bar-name">Yr 2</span>
+        <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar2" style="width:100%"></div></div>
+        <span class="yr-bar-val" id="qYr2">$160,000</span>
+      </div>
+      <div class="yr-bar-row">
+        <span class="yr-bar-name">Yr 3</span>
+        <div class="yr-bar-track"><div class="yr-bar-fill" id="qBar3" style="width:100%"></div></div>
+        <span class="yr-bar-val" id="qYr3">$160,000</span>
+      </div>
+    </div>
+    <div class="q-3yr-total">
+      <div>
+        <div class="q-3yr-total-label">3-Year total</div>
+        <div class="q-3yr-avg" id="q3yrAvg">— blended avg</div>
+      </div>
+      <div class="q-3yr-total-val" id="q3yrTotal">$480,000</div>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="q-breakdown">
+    <div class="q-bk-tabs">
+      <button class="q-bk-tab active" id="qTabY1" onclick="switchTab('annual')">Year 1</button>
+      <button class="q-bk-tab" id="qTab3y" onclick="switchTab('3yr')">3-Year</button>
+    </div>
+    <div class="q-bk-body" id="qBkBody"></div>
+  </div>
+
+</aside>
+</div><!-- /app -->
+
+<script>
+const TIERS=[
+  {name:"Entry",     vol:100000,  rate:4.00},
+  {name:"Growth",    vol:250000,  rate:2.50},
+  {name:"Scale",     vol:500000,  rate:2.00},
+  {name:"Enterprise",vol:1000000, rate:1.25},
+  {name:"Strategic", vol:2500000, rate:0.75},
+];
+const UC_PKGS=[
+  {name:"Starter", desc:"1 use case",  price:65000,  unit:"$65,000 / use case"},
+  {name:"Growth",  desc:"3 use cases", price:165000, unit:"$55,000 / use case"},
+  {name:"Scale",   desc:"5 use cases", price:250000, unit:"$50,000 / use case"},
+];
+const OPUS_PKGS=[
+  {
+    name:"Prove", desc:"4 months", price:240000,
+    includes:["Project Manager","AI Solution Consultant","AI Workflow Engineer","Delivery Governance","2 × Opus Academy Sessions"],
+    outcomes:["6–8 workflows delivered","Foundational integrations established","Initial ROI realised"],
+    uplift:null,
+    prefix:null
+  },
+  {
+    name:"Scale", desc:"8 months", price:480000,
+    includes:["Project Coordinator","5 × Opus Academy Sessions"],
+    outcomes:["12–16 workflows delivered","Cross-functional automation","Reusable integration ecosystem"],
+    uplift:["Increased delivery velocity","Parallel workflows","Project reporting","Strong governance + adoption layer"],
+    prefix:"Everything in Prove, plus:"
+  },
+  {
+    name:"Transform", desc:"12 months", price:720000,
+    includes:["Training Bootcamp","Advanced workflow patterns","Multi-system orchestration (5+ systems)","Quarterly Value Reviews","Named Senior AI Architect (reserved monthly hours)"],
+    outcomes:["20+ workflows delivered","End-to-end process transformation","Measurable business impact at scale"],
+    uplift:["Enterprise-grade orchestration","Strategic transformation","Embedded capability within client"],
+    prefix:"Everything in Scale, plus:"
+  },
+];
+
+let selTier=null,selUC=null,selOpus=null,certImplQty=1;
+let l0=false;
+let vas={support:false,enablAdv:false,enablEnt:false,certImpl:false,certPartner:false};
+let bkTab='annual';
+
+const $=id=>document.getElementById(id);
+function fmt(n){if(n===null||n===undefined)return'—';if(n===0)return'$0';return'$'+Math.round(n).toLocaleString('en-US');}
+function fvol(n){if(n>=1000000)return(n/1000000).toFixed(n%1000000===0?0:1)+'M';return(n/1000).toFixed(0)+'K';}
+
+function toggleSec(id){
+  const s=$(id);
+  s.classList.toggle('collapsed');
+  // update nav active
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const map={s0:0,s1:1,s2:2,s3:3,sV:4};
+  if(map[id]!==undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+}
+
+function scrollTo(id){
+  $(id).scrollIntoView({behavior:'smooth',block:'start'});
+  if($(id).classList.contains('collapsed')) toggleSec(id);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const map={s0:0,s1:1,s2:2,s3:3,sV:4};
+  if(map[id]!==undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+}
+
+function buildTierCards(){
+  const w=$('tierCards');w.innerHTML='';
+  TIERS.forEach((t,i)=>{
+    const total=Math.round(t.vol*t.rate);
+    const d=document.createElement('div');
+    d.className='tc'+(selTier===i?' active':'');
+    d.innerHTML=`<div class="tc-name">${t.name}</div><div class="tc-vol">${fvol(t.vol)}</div><div class="tc-rate">$${t.rate.toFixed(2)}/txn</div><div class="tc-total">${fmt(total)}/yr</div>`;
+    d.onclick=()=>{selTier=i;buildTierCards();calc();};
+    w.appendChild(d);
+  });
+}
+
+function buildPkgCards(wrapId,pkgs,sel,cb,showUnit){
+  const w=$(wrapId);w.innerHTML='';
+  pkgs.forEach((p,i)=>{
+    const d=document.createElement('div');
+    const isActive=sel===i;
+    d.className='pc'+(isActive?' active':'');
+
+    // Simple UC card
+    if(showUnit){
+      const unitHtml=p.unit?`<div class="pc-unit">${p.unit}</div>`:'';
+      d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div class="pc-name">${p.name}</div><div class="pc-desc">${p.desc}</div>${unitHtml}</div><div class="pc-price">${fmt(p.price)}</div></div>`;
+    } else {
+      // Rich Opus Squad card
+      const prefixHtml=p.prefix?`<div class="opus-prefix">${p.prefix}</div>`:'<div class="opus-section-label">Includes:</div>';
+      const includesHtml=p.includes.map(x=>`<div class="opus-item"><span class="opus-dot"></span>${x}</div>`).join('');
+      const upliftHtml=p.uplift?`<div class="opus-section-label" style="margin-top:8px">Value Uplift:</div>${p.uplift.map(x=>`<div class="opus-item opus-item-uplift"><span class="opus-dot uplift-dot"></span>${x}</div>`).join('')}`:'';
+      const outcomesHtml=`<div class="opus-section-label" style="margin-top:8px">Expected Outcomes:</div>${p.outcomes.map(x=>`<div class="opus-item opus-item-outcome"><span class="opus-dot outcome-dot"></span>${x}</div>`).join('')}`;
+
+      d.innerHTML=`
+        <div class="opus-card-top">
+          <div>
+            <div class="pc-name">${p.name}</div>
+            <div class="pc-desc">${p.desc}</div>
+          </div>
+          <div class="pc-price">${fmt(p.price)}</div>
+        </div>
+        <div class="opus-detail">
+          ${prefixHtml}
+          ${includesHtml}
+          ${upliftHtml}
+          ${outcomesHtml}
+        </div>`;
+    }
+    d.onclick=()=>cb(i);
+    w.appendChild(d);
+  });
+}
+
+let ucCb,opusCb;
+function initPkgCards(){
+  ucCb=(i)=>{selUC=i;buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);calc();};
+  opusCb=(i)=>{selOpus=i;buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);calc();};
+  buildPkgCards('ucCards',UC_PKGS,selUC,ucCb,true);
+  buildPkgCards('opusCards',OPUS_PKGS,selOpus,opusCb,false);
+}
+
+function toggleL0(){
+  l0=!l0;
+  $('toggleL0').classList.toggle('on',l0);
+  $('l0Switch').style.background=l0?'var(--slate)':'';
+  calc();
+}
+
+function toggleL2(){
+  const v=$('l2model').value;
+  $('l2ucWrap').style.display  =v==='uc'  ?'block':'none';
+  $('l2opusWrap').style.display=v==='opus'?'block':'none';
+  if(v==='self'){selUC=null;selOpus=null;initPkgCards();}
+}
+
+function toggleVAS(key){
+  vas[key]=!vas[key];
+  const cap=key.charAt(0).toUpperCase()+key.slice(1);
+  $('toggle'+cap).classList.toggle('on',vas[key]);
+  if(key==='certImpl') $('certImplQtyWrap').style.display=vas[key]?'flex':'none';
+  calc();
+}
+
+function adjQty(delta){
+  certImplQty=Math.max(1,certImplQty+delta);
+  $('certImplQtyVal').textContent=certImplQty;
+  $('certImplTag').textContent=fmt(15000*certImplQty)+' total';
+  calc();
+}
+
+function switchTab(t){
+  bkTab=t;
+  $('qTabY1').classList.toggle('active',t==='annual');
+  $('qTab3y').classList.toggle('active',t==='3yr');
+  calc();
+}
+
+function calc(){
+  const addEnv=parseInt($('addEnv').value);
+  const l2model=$('l2model').value;
+
+  const l1Annual=160000+(addEnv*30000);
+  const l0Amt=l0?35000:0;
+
+  let l2Total=0,l2Label='';
+  if(l2model==='uc'&&selUC!==null){l2Total=UC_PKGS[selUC].price;l2Label=UC_PKGS[selUC].name+' ('+UC_PKGS[selUC].desc+')';}
+  if(l2model==='opus'&&selOpus!==null){l2Total=OPUS_PKGS[selOpus].price;l2Label='Opus Squad · '+OPUS_PKGS[selOpus].desc;}
+
+  const t=selTier!==null?TIERS[selTier]:null;
+  const l3Annual=t?Math.round(t.vol*t.rate):0;
+
+  const supportAmt    =vas.support    ?Math.round((l1Annual+l3Annual)*0.20):0;
+  const enablAdvAmt   =vas.enablAdv   ?30000:0;
+  const enablEntAmt   =vas.enablEnt   ?75000:0;
+  const certImplAmt   =vas.certImpl   ?15000*certImplQty:0;
+  const certPartnerAmt=vas.certPartner?50000:0;
+  const vasOneTime=enablAdvAmt+enablEntAmt+certImplAmt+certPartnerAmt;
+  const vasRecurring=supportAmt;
+  const vasAnnual=vasRecurring+vasOneTime;
+
+  const recurAnnual=l1Annual+l3Annual+vasRecurring;
+  const yr1=recurAnnual+l0Amt+l2Total+vasOneTime;
+  const yr2=recurAnnual;
+  const yr3=recurAnnual;
+  const total3=yr1+yr2+yr3;
+  const avg3=Math.round(total3/3);
+
+  // ── Nav section metas
+  $('s0meta').textContent=l0?'$35,000':'Not included';
+  $('s1meta').textContent=fmt(l1Annual)+' / yr';
+  const l2meta=l2model==='self'?'Self-serve':(l2Total>0?fmt(l2Total):'Select package');
+  $('s2meta').textContent=l2meta;
+  $('s3meta').textContent=t?`${fvol(t.vol)} · ${fmt(l3Annual)}/yr`:'No tier selected';
+  const vasCount=Object.values(vas).filter(Boolean).length;
+  $('sVmeta').textContent=vasCount>0?`${vasCount} selected`:'None selected';
+
+  // ── Quote header layer rows
+  $('ql0').style.display=l0?'flex':'none';
+  $('ql0v').textContent=fmt(l0Amt);
+  $('ql1v').textContent=fmt(l1Annual);
+  $('ql2').style.display=l2Total>0?'flex':'none';
+  $('ql2n').textContent=l2Label||'Implementation';
+  $('ql2v').textContent=fmt(l2Total);
+  $('ql3').style.display=t?'flex':'none';
+  $('ql3n').textContent=t?`${fvol(t.vol)} executions`:'Execution';
+  $('ql3v').textContent=t?fmt(l3Annual):'—';
+  $('qlVAS').style.display=vasAnnual>0?'flex':'none';
+  $('qlVASv').textContent=vasAnnual>0?fmt(vasAnnual):'—';
+
+  // add has-val class
+  ['ql0','ql1','ql2','ql3','qlVAS'].forEach(id=>{
+    const el=$(id);
+    if(el) el.classList.toggle('has-val',el.style.display!=='none');
+  });
+
+  // ── Hero
+  $('qTotal').textContent=fmt(yr1);
+  $('qMonthly').textContent=fmt(Math.round(yr1/12))+' / month';
+
+  // ── Support tag
+  $('supportTag').textContent=vas.support?fmt(supportAmt)+' / yr':'20% of L1 + L3';
+
+  // ── Rate bar
+  if(t){
+    const pct=100-(selTier/(TIERS.length-1))*82;
+    $('qRateFill').style.width=Math.round(pct)+'%';
+    $('qRate').textContent='$'+t.rate.toFixed(2)+' / txn';
+    $('qRateDesc').textContent=`${fvol(t.vol)} executions · ${t.name} tier · ${fmt(l3Annual)} / yr`;
+  } else {
+    $('qRateFill').style.width='0%';
+    $('qRate').textContent='—';
+    $('qRateDesc').textContent='Select a volume tier';
+  }
+
+  // ── 3yr bars
+  const maxYr=Math.max(yr1,yr2,yr3)||1;
+  $('qBar1').style.width=Math.round((yr1/maxYr)*100)+'%';
+  $('qBar2').style.width=Math.round((yr2/maxYr)*100)+'%';
+  $('qBar3').style.width=Math.round((yr3/maxYr)*100)+'%';
+  $('qYr1').textContent=fmt(yr1);
+  $('qYr2').textContent=fmt(yr2);
+  $('qYr3').textContent=fmt(yr3);
+  $('q3yrTotal').textContent=fmt(total3);
+  $('q3yrAvg').textContent=fmt(avg3)+' blended avg';
+
+  // ── Breakdown
+  const is3=bkTab==='3yr';
+  const rows=[];
+
+  if(l0Amt>0){
+    rows.push({type:'grp',label:'Layer 0 — Value Sprint'});
+    rows.push({label:'Value Sprint · 3–4 days on-site',detail:'One-time · pre-platform',val:fmt(l0Amt),val3:fmt(l0Amt)});
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l0Amt),val3:fmt(l0Amt)});
+  }
+
+  rows.push({type:'grp',label:'Layer 1 — Platform · 3-Year Term'});
+  rows.push({label:'Platform licence',detail:'Fixed · ×3 years',val:fmt(130000),val3:fmt(130000*3)});
+  rows.push({label:'Production environment',detail:'Bundled · ×3 years',val:fmt(30000),val3:fmt(30000*3)});
+  if(addEnv>0) rows.push({label:`Additional environments ×${addEnv}`,detail:`$${(30000*addEnv).toLocaleString()}/yr · ×3`,val:fmt(addEnv*30000),val3:fmt(addEnv*30000*3)});
+  rows.push({type:'sub',label:'Subtotal',val:fmt(l1Annual),val3:fmt(l1Annual*3)});
+
+  if(l2Total>0){
+    rows.push({type:'grp',label:'Layer 2 — Implementation · Year 1'});
+    if(l2model==='uc') rows.push({label:`${UC_PKGS[selUC].name} package`,detail:UC_PKGS[selUC].desc+' · one-time',val:fmt(l2Total),val3:fmt(l2Total)});
+    if(l2model==='opus') rows.push({label:`Opus Squad · ${OPUS_PKGS[selOpus].name}`,detail:OPUS_PKGS[selOpus].desc+' · one-time',val:fmt(l2Total),val3:fmt(l2Total)});
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l2Total),val3:fmt(l2Total)});
+  }
+
+  if(t){
+    rows.push({type:'grp',label:'Layer 3 — Decision & Execution · Annual'});
+    rows.push({label:`${fvol(t.vol)} executions × $${t.rate.toFixed(2)}`,detail:`${t.name} tier · recurring`,val:fmt(l3Annual),val3:fmt(l3Annual*3)});
+    rows.push({type:'sub',label:'Subtotal',val:fmt(l3Annual),val3:fmt(l3Annual*3)});
+  }
+
+  if(vasAnnual>0){
+    rows.push({type:'grp',label:'Add-ons & Value-Added Services'});
+    if(vas.support)      rows.push({label:'Premium 24/7 Support',detail:`20% × ${fmt(l1Annual+l3Annual)} · recurring`,val:fmt(supportAmt),val3:fmt(supportAmt*3)});
+    if(vas.enablAdv)     rows.push({label:'Advanced Enablement',detail:'One-time · Year 1',val:fmt(enablAdvAmt),val3:fmt(enablAdvAmt)});
+    if(vas.enablEnt)     rows.push({label:'Enterprise Academy',detail:'One-time · Year 1',val:fmt(enablEntAmt),val3:fmt(enablEntAmt)});
+    if(vas.certImpl)     rows.push({label:`Certified Opus Implementer ×${certImplQty}`,detail:`$15,000 × ${certImplQty} · one-time`,val:fmt(certImplAmt),val3:fmt(certImplAmt)});
+    if(vas.certPartner)  rows.push({label:'Certified Opus Partner',detail:'One-time · Year 1',val:fmt(certPartnerAmt),val3:fmt(certPartnerAmt)});
+    const vasTrue3yr=vasRecurring*3+vasOneTime;
+    rows.push({type:'sub',label:'Subtotal',val:fmt(vasAnnual),val3:fmt(vasTrue3yr)});
+  }
+
+  if(is3){
+    rows.push({type:'grp',label:'Year-by-Year'});
+    const yr1Parts=[l0Amt>0?'Value Sprint':null,l2Total>0?'Layer 2':null,vasOneTime>0?'one-time add-ons':null].filter(Boolean).join(' + ');
+    rows.push({label:'Year 1',detail:yr1Parts?`Recurring + ${yr1Parts}`:'Recurring only',val:fmt(yr1),val3:''});
+    rows.push({label:'Year 2',detail:'Recurring only',val:fmt(yr2),val3:''});
+    rows.push({label:'Year 3',detail:'Recurring only',val:fmt(yr3),val3:''});
+  }
+
+  const grandLabel=is3?'Total Contract Value — 3 Years':'Year 1 Total';
+  rows.push({type:'grand',label:grandLabel,val:is3?fmt(total3):fmt(yr1),val3:is3?'':fmt(total3)});
+
+  const hasOneTime=l0Amt>0||l2Total>0||vasOneTime>0;
+
+  $('qBkBody').innerHTML=rows.map(r=>{
+    if(r.type==='grp') return `<div class="bk-grp">${r.label}</div>`;
+    if(r.type==='sub') return `<div class="bk-sub"><span class="bk-sub-label">${r.label}</span><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-sub-val">${r.val3}</span>`:`<span class="bk-sub-val">${r.val}</span>`}</div></div>`;
+    if(r.type==='grand') return `<div class="bk-grand"><span class="bk-grand-label">${r.label}</span><span class="bk-grand-val">${r.val}</span></div>${hasOneTime?'<div class="bk-yr-note">Value Sprint, Layer 2, enablement programmes, and certifications are one-time investments in Year 1. Layer 1, Layer 3, and Premium Support recur annually.</div>':''}`;
+    return `<div class="bk-row"><div><div class="bk-row-label">${r.label}</div><div class="bk-row-detail">${r.detail||''}</div></div><div style="display:flex;gap:16px;align-items:baseline">${is3?`<span class="bk-row-val3">${r.val}</span><span class="bk-row-val">${r.val3||''}</span>`:`<span class="bk-row-val">${r.val}</span>`}</div></div>`;
+  }).join('');
+}
+
+buildTierCards();
+initPkgCards();
+// Default Layer 2: Use case packages, Growth selected
+document.getElementById('l2model').value='uc';
+selUC=1;
+toggleL2();
+initPkgCards();
+calc();
+</script>
+</body>
+</html>
